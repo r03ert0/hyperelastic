@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8 />
+	<title>Growth</title>
+	<script src="lib/jquery-1.8.2.min.js"></script>
+	<script src="lib/three.min.js"></script>
+	<script src="lib/TrackballControls.js"></script>
+</head>
+<body>
+	<div style="width:200px;border:thin solid #bbb;padding:5px;position:absolute;top:10px;left:10px;z-index:10;background-color:rgba(255,255,255,0.5);box-shadow:3px 3px 5px 6px #ccc;">
+		<select id="select" style="width:100%">
+			<option value="SphereSurface">Sphere</option>
+			<option value="EllipsoidSurface">Ellipsoid</option>
+			<option value="RingTangential">Ring: Tangential growth</option>
+			<option value="RingBorder">Ring: Border growth</option>
+		</select>
+		<div id="params"></div>
+		<div id="log" style="border:thin solid lightGrey;padding:10px"></div>
+		<button id="startStop">Start</button>
+	</div>
+
+	<script src="hyperelastic.js"></script>
+</body>
+</html>
+
+
