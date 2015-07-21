@@ -2,25 +2,158 @@
 <html>
 <head>
 	<meta charset=utf-8 />
-	<title>Growth</title>
+	<title>Mechanical Morphogenesis</title>
 	<script src="lib/jquery-1.8.2.min.js"></script>
 	<script src="lib/three.min.js"></script>
 	<script src="lib/TrackballControls.js"></script>
 </head>
 <body>
-	<div style="width:200px;border:thin solid #bbb;padding:5px;position:absolute;top:10px;left:10px;z-index:10;background-color:rgba(255,255,255,0.5);box-shadow:3px 3px 5px 6px #ccc;">
-		<select id="select" style="width:100%">
-			<option value="SphereSurface">Sphere</option>
-			<option value="EllipsoidSurface">Ellipsoid</option>
-			<option value="RingTangential">Ring: Tangential growth</option>
-			<option value="RingBorder">Ring: Border growth</option>
-		</select>
-		<div id="params"></div>
-		<div id="log" style="border:thin solid lightGrey;padding:10px"></div>
-		<button id="startStop">Start</button>
-	</div>
 
-	<script src="hyperelastic.js"></script>
+	<div style="font-family:sans-serif;font-size:12px;border:thin solid #bbb;padding:5px;position:absolute;top:10px;left:10px;z-index:10;background-color:rgba(255,255,255,0.8)">
+		<table id="params"></table>
+		<!-- <div id="log" style="border:thin solid lightGrey;padding:10px"></div> -->
+		<button id="restart">Restart</button>
+	</div>
+	
+	<script src="algebra.js"></script>
+	<script src="geometry.js"></script>
+	<script src="growth.js"></script>
+	<script src="mechanics.js"></script>
+	<script src="display.js"></script>
+	<script src="simulation.js"></script>
+	<script src="presets.js"></script>
+	<script>
+	var menus={
+		preset: ["Ring Tangential","Ring Border"/*,"Sphere Surface","Ellipsoid Surface"*/],
+		growth: ["ring tangential instantaneous","ring border instantaneous"],
+		geometry: ["ring"/*,"sphere"*/],
+		colormap: ["normal","deformation"]
+	};
+	
+	var args=getArguments();
+	switch(args.model) {
+		case "RingTangential":
+			simulationParams=clone(RingTangential);
+			break;
+		case "RingBorder":
+			simulationParams=clone(RingBorder);
+			break;
+		case "Sphere":
+			simulationParams=clone(SphereSurface);
+			break;
+		case "Ellipsoid":
+			simulationParams=clone(EllipsoidSurface);
+			break;
+		default:
+			simulationParams=clone(RingTangential);
+	}
+	setParams(simulationParams,menus);
+
+	$("#restart").click(function(){
+		simulationParams=getParams();
+		simulation=initSimulation(simulationParams);
+		initMesh(display,simulation,simulationParams);
+	});
+
+	// init display
+	display=initDisplay(simulationParams);
+
+	// start simulation
+	simulation=initSimulation(simulationParams);
+	initMesh(display,simulation,simulationParams);
+
+	// trigger animation
+	animate();
+
+	function getArguments() {
+		var search = location.search.substring(1);
+		return search?JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
+						 function(key, value) { return key===""?value:decodeURIComponent(value) }):{}	
+	}
+	function clone(obj) {
+		return JSON.parse(JSON.stringify(obj));
+	}
+	function setParams(param,menus) {
+		console.log("set parametres",param);
+		var i,j,key,type,val,sel;
+		$(".param").remove();
+		for(key in param) {
+			val=param[key];
+		
+			// handle menus
+			if(menus[key]!=undefined) {
+				var str;
+				str="<tr class='param'><td>"+key+"</td><td><select id='"+key+"' class='string'>";
+				for(j in menus[key])
+					str+="<option value='"+menus[key][j]+"'>"+menus[key][j]+"</option>";
+				str+="</select></td></tr>";
+				$("#params").append(str);
+				$("#"+key).val(val);
+				continue;
+			}
+		
+			// handle single value fields
+			type=typeof val;
+			switch(type) {
+				case "number":
+				case "string":
+					$("#params").append("<tr class='param'><td>"+key+"</td><td><input type='text' class='"+type+"' id='"+key+"' size='10'/></td></tr>");		
+					$("#"+key).val(param[key].toString());
+					break;
+				case "boolean":
+					$("#params").append("<tr class='param'><td>"+key+"</td><td><input type='checkbox' class='"+type+"' id='"+key+"' size='10'/></td></tr>");		
+					$("#"+key).prop('checked',param[key]);
+					break;
+			}
+		}
+		$("#preset").change(function() {
+			simulationParams=getPresetParams();
+			setParams(simulationParams,menus);
+			simulation=initSimulation(simulationParams);
+			initMesh(display,simulation,simulationParams);
+		});
+
+	}
+	function getParams() {
+		var param={};
+		$(".param").each(function(i){
+			var key,val,type;
+			key=$(this).find("td")[0].innerHTML;
+			type=$("#"+key).attr('class');
+			switch(type) {
+				case "boolean":
+					val=$("#"+key).prop('checked');
+					break;
+				case "number":
+					val=JSON.parse($("#"+key).val());
+					break;
+				case "string":
+					val=$("#"+key).val();
+					break;
+			}
+			param[key]=val;
+		});
+	
+		return param;
+	}
+	function getPresetParams() {
+		switch($("#preset").val()) {
+			case "Ring Tangential":
+				param=clone(RingTangential);
+				break;
+			case "Ring Border":
+				param=clone(RingBorder);
+				break;
+			case "Sphere Surface":
+				param=clone(SphereSurface);
+				break;
+			case "Ellipsoid Surface":
+				param=clone(EllipsoidSurface);
+				break;
+		}
+		return param;
+	}
+	</script>
 </body>
 </html>
 
