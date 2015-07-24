@@ -201,8 +201,11 @@ function animate() {
 
 	display.mesh.needsUpdate=true;
 	display.geometry.colorsNeedUpdate=true;
+<<<<<<< HEAD
 	
 	$("#log").html("t: "+simulation.time.toFixed(4)+" Ue:"+simulation.me.Ue.toFixed(2));
+=======
+>>>>>>> origin/master
 }
 /**
 Color map: from dark blue to dark red for negative to positive values
