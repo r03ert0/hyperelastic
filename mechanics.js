@@ -157,16 +157,11 @@ function tetraElasticity(ge,me) {
 		Us = 0.5*mu*(trace(B)/Math.pow(J,2/3)-3);
 		Uv = K*(J-Math.log(J)-1);
 		Ue += Us + Uv;
-    }
-<<<<<<< HEAD
-    
+    }    
     // store elastic energy values
     me.Us=Us;
     me.Uv=Uv;
     me.Ue=Ue;
-=======
-    //console.log(Ue);
->>>>>>> origin/master
 }
 /**
 linElasticity.
