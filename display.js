@@ -201,6 +201,8 @@ function animate() {
 
 	display.mesh.needsUpdate=true;
 	display.geometry.colorsNeedUpdate=true;
+	
+	$("#log").html("t: "+simulation.time.toFixed(4)+" Ue:"+simulation.me.Ue.toFixed(2));
 }
 /**
 Color map: from dark blue to dark red for negative to positive values
