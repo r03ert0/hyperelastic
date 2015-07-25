@@ -5,22 +5,22 @@ The interface presents various presets illustrating different geometries and gro
 
 For the ring, the geometry parametres are:
 
-*Ri: Inner radius in mm
-*Ro: Outer radius in mm
-*th: ring thickness
-*d: size of a typical tetrahedron. Ri, Ro and th have to be multiples of this value.
+* Ri: Inner radius in mm
+* Ro: Outer radius in mm
+* th: ring thickness
+* d: size of a typical tetrahedron. Ri, Ro and th have to be multiples of this value.
 
 For the block, the geometry parametres are:
 
-*Width: block width in mm
-*Height: block height in mm
-*Depth: block depth in mm
-*d: length of a typical tetrahedron. Width, Height and Depth have to be multiples of d.
+* Width: block width in mm
+* Height: block height in mm
+* Depth: block depth in mm
+* d: length of a typical tetrahedron. Width, Height and Depth have to be multiples of d.
 
 Render options:
-*Wireframe: whether to display the objects in wireframe or not
-*Perspective: whether to use perspective rendering or orthographic
-*colormap: two colormaps are currently available. The 'normal' colormap colours each face according to its normal vector. The 'deformation' colormap colours each face according the the material deformation of each the object relative to the rest reference volume. The colour map goes from black for the most contracted elements to white for the most dilated elements.
+* Wireframe: whether to display the objects in wireframe or not
+* Perspective: whether to use perspective rendering or orthographic
+* colormap: two colormaps are currently available. The 'normal' colormap colours each face according to its normal vector. The 'deformation' colormap colours each face according the the material deformation of each the object relative to the rest reference volume. The colour map goes from black for the most contracted elements to white for the most dilated elements.
 
 After each change in parametres click 'Restart' to launch a new simulation.
 
