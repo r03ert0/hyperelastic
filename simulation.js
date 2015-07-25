@@ -25,6 +25,9 @@ function initSimulation(params) {
 	
 	// create geometry
 	switch(params.geometry) {
+		case "block":
+			si.ge=makeBlock(params);
+			break;
 		case "ring":
 			si.ge=makeRing(params);
 			break;
@@ -39,6 +42,12 @@ function initSimulation(params) {
 	// init growth
 	si.gr=initGrowth(params);
 	switch(params.growth) {
+		case "homogeneous":
+			si.growthFunction=growHomogeneous;
+			break;
+		case "block border instantaneous":
+			si.growthFunction=growBlockBorderInstantaneous;
+			break;
 		case "ring border instantaneous":
 			si.growthFunction=growRingBorderInstantaneous;
 			break;

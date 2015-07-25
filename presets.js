@@ -97,3 +97,31 @@ var EllipsoidSurface=new Object({
 	geomFunc:makeSphere,
 	growthFunc:growSurfaceInstantaneous		// growth function
 });
+
+/* Model 5: Ring, Border growth */
+var BlockBorder=new Object({
+	preset:"Block Border",
+	
+	// geometry
+	geometry:"block",	// geometry, "block", "ring" or "sphere"
+	Width:8,   			// width in mm
+	Height:3,   			// height in mm
+	Depth:0.5, 			// depth in mm
+	d:0.5,  			// typical length of a volume elements
+
+	// mechanics
+	gamma:0.1,		// dumping factor
+	rho:0.0001,		// mass density
+	mu:50,			// shear modulus
+	K:5,			// bulk modulus
+	
+	// growth
+	growth:"block border instantaneous", // growth function
+	G:3.0,								// growth
+	T:0.0,						 		// duration of growth (in sec). T=0 means instantaneous growth
+
+	// display
+	colormap:"deformation",	// normal, deformation, etc.
+	wireframe:false,
+	perspective:false	// set to false for orthographic perspective
+});
