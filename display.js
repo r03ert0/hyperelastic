@@ -80,7 +80,7 @@ function initMesh(di,si,params) {
 
 	di.geometry=new THREE.Geometry();
 	for(n=0;n<np;n++)
-		di.geometry.vertices.push(new THREE.Vector3(p[3*n],p[3*n+1],p[3*n+2]));
+		di.geometry.vertices.push(new THREE.Vector3(p[3*n+0],p[3*n+1],p[3*n+2]));
 	for(n=0;n<nt;n++) {
 		for(i=0;i<12;i+=3) {
 			v1=t[n*4+indx[i+0]];
@@ -189,8 +189,11 @@ function animate() {
 
 	simulationStep(simulation);
 	
-	if(simulationParams.colormap=="deformation" && simulationParams.geometry=="ring") {
-		ring_deformationColor(simulation.ge);
+	if(simulationParams.colormap=="deformation") {
+		if(simulationParams.geometry=="block")
+			block_deformationColor(simulation.ge);
+		else if(simulationParams.geometry=="ring")
+			ring_deformationColor(simulation.ge);
 	}
 		
 	updateMesh(display,simulation);
@@ -342,6 +345,66 @@ function ring_deformationColor(ge) {
 				color=black2white(2*(J-minJ)/(maxJ-minJ)-1);
 				display.geometry.faces[n*4+m].color.setRGB(color.red,color.green,color.blue);
 				//display.geometry.faces[n*4+m].color.setRGB(1,0,0);
+			}
+		}
+	}
+	minJ=tminJ;
+	maxJ=tmaxJ;
+}
+/**
+Map deformation of a block geometry into colors
+*/
+var minJ=0,maxJ=1;
+function block_deformationColor(ge) {
+	var nw=ge.nw;
+	var nh=ge.nh;
+	var nd=ge.nd;
+	var p=ge.p;
+	var r=ge.r;
+	var t=ge.t;
+	var i,j,k,l,m,n;
+	var numbox;
+	var J,vol0,vol1;
+	var	tminJ,tmaxJ,color;
+
+	// tetrahedral boxes
+	for(i=0;i<nw-1;i++)
+	for(j=0;j<nh-1;j++)
+	for(k=0;k<nd-1;k++)
+	{
+		// box element index
+		numbox=i*(nh-1)*(nd-1)+j*(nd-1)+k;
+		// box's tetrahedral element index
+		vol0=0;
+		vol1=0;
+		for(l=0;l<5;l++) {
+			n=numbox*5+l;
+
+			vol0+=tetraVol(
+					r[3*(4*n+0)+0],r[3*(4*n+0)+1],r[3*(4*n+0)+2],
+					r[3*(4*n+1)+0],r[3*(4*n+1)+1],r[3*(4*n+1)+2],
+					r[3*(4*n+2)+0],r[3*(4*n+2)+1],r[3*(4*n+2)+2],
+					r[3*(4*n+3)+0],r[3*(4*n+3)+1],r[3*(4*n+3)+2]);
+			vol1+=tetraVol(
+					p[3*t[4*n+0]+0],p[3*t[4*n+0]+1],p[3*t[4*n+0]+2],
+					p[3*t[4*n+1]+0],p[3*t[4*n+1]+1],p[3*t[4*n+1]+2],
+					p[3*t[4*n+2]+0],p[3*t[4*n+2]+1],p[3*t[4*n+2]+2],
+					p[3*t[4*n+3]+0],p[3*t[4*n+3]+1],p[3*t[4*n+3]+2]);
+		}
+		J=Math.log(vol1/vol0);
+		if(i+j+k==0) {
+			tminJ=J;
+			tmaxJ=J;
+		}
+		if(J>tmaxJ)
+			tmaxJ=J;
+		if(J<tminJ)
+			tminJ=J;
+		for(l=0;l<5;l++) {
+			n=numbox*5+l;
+			for(m=0;m<4;m++) {
+				color=black2white(2*(J-minJ)/(maxJ-minJ)-1);
+				display.geometry.faces[n*4+m].color.setRGB(color.red,color.green,color.blue);
 			}
 		}
 	}

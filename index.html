@@ -24,14 +24,17 @@
 	<script src="presets.js"></script>
 	<script>
 	var menus={
-		preset: ["Ring Tangential","Ring Border"/*,"Sphere Surface","Ellipsoid Surface"*/],
-		growth: ["ring tangential instantaneous","ring border instantaneous"],
-		geometry: ["ring"/*,"sphere"*/],
+		preset: ["Block Border","Ring Tangential","Ring Border"/*,"Sphere Surface","Ellipsoid Surface"*/],
+		growth: ["homogeneous","block border instantaneous","ring tangential instantaneous","ring border instantaneous"],
+		geometry: ["block","ring"/*,"sphere"*/],
 		colormap: ["normal","deformation"]
 	};
 	
 	var args=getArguments();
 	switch(args.model) {
+		case "BlockBorder":
+			simulationParams=clone(BlockBorder);
+			break;
 		case "RingTangential":
 			simulationParams=clone(RingTangential);
 			break;
@@ -45,7 +48,7 @@
 			simulationParams=clone(EllipsoidSurface);
 			break;
 		default:
-			simulationParams=clone(RingTangential);
+			simulationParams=clone(BlockBorder);
 	}
 	setParams(simulationParams,menus);
 
@@ -138,6 +141,9 @@
 	}
 	function getPresetParams() {
 		switch($("#preset").val()) {
+			case "Block Border":
+				param=clone(BlockBorder);
+				break;
 			case "Ring Tangential":
 				param=clone(RingTangential);
 				break;

@@ -8,7 +8,7 @@
 	Depends on algebra.js 
 */
 
-var ringTetraTopo=[
+var tetraTopo=[
 	"001 010 100 111",
 	"000 010 100 001",
 	"011 001 111 010",
@@ -124,6 +124,41 @@ function computeNodalVolume(ge) {
 }
 
 /**
+Get global index of a tetrahedron within a block based on its width, height and depth
+indices.
+@param {integer} i width index of the tetrahedron
+@param {integer} j height index of the tetrahedron
+@param {integer} k depth index of the tetrahedron
+*/
+function blockVind(i,j,k,nw,nh) {
+    return k*nh*nw+j*nw+i;
+}
+/**
+Create a new block tetrahedron topology.
+@param {integer} n global index of the tetrahedron
+@param {integer} i base width index of the tetrahedron
+@param {integer} j base height index of the tetrahedron
+@param {integer} k base depth index of the tetrahedron
+@param {string} s description of tetrahedron topology relative to the base i, j, k indices
+*/
+function blockTetra(n,i,j,k,s,ge) {
+	var t=ge.t;
+	var nw=ge.nw;
+	var nh=ge.nh;
+    var a=s.split(" ");
+    var b=a.map(function(m) {
+            return blockVind(
+                i+parseInt(m.charAt(0)),
+                j+parseInt(m.charAt(1)),
+                k+parseInt(m.charAt(2)),
+                nw,nh);
+        });
+    t[4*n+0]=b[0];
+    t[4*n+1]=b[1];
+    t[4*n+2]=b[2];
+    t[4*n+3]=b[3];
+}
+/**
 Get global index of a tetrahedron within a ring based on its angular, radial and depth
 indices.
 @param {integer} i angular index of the tetrahedron
@@ -158,6 +193,79 @@ function ringTetra(n,i,j,k,s,ge) {
     t[4*n+2]=b[2];
     t[4*n+3]=b[3];
 }
+/**
+makeBlock
+*/
+function makeBlock(params) {
+	var ge = new myGeometry();
+	
+	var Width=params.Width;
+	var Height=params.Height;
+	var Depth=params.Depth;
+	var d=params.d;
+	var nw=parseInt(Width/d+0.5)+1;		// volume elements in the outter circle (+0.5 used for rounding)
+	var nh=parseInt(Height/d+0.5)+1;	// number of vol. elem. rings in x-y plane
+	var nd=parseInt(Depth/d+0.5)+1; 	// number of vol. elem. rings in z
+	var np=nw*nh*nd;
+	var nt=5*(nw-1)*(nh-1)*(nd-1);
+	var p=new Float32Array(np*3);
+	var r=new Float32Array(nt*4*3);
+	var t=new Uint16Array(nt*4);
+	var Volume=new Float32Array(np);
+
+	var i,j,k,l,n,m,R;
+
+	ge.Width=Width;
+	ge.Height=Height;
+	ge.Depth=Depth;
+	ge.d=d;
+	
+	ge.nw=nw;
+	ge.nh=nh;
+	ge.nd=nd;
+	ge.np=np;
+	ge.nt=nt;
+	ge.p=p;
+	ge.r=r;
+	ge.t=t;
+	ge.Volume=Volume;
+	
+	console.log("Number of vertices: "+np+" ("+nw+","+nh+","+nd+")");
+	console.log("Number of tetrahedra: "+nt);
+
+	// create material vertices
+	m=0;
+	for(i=0;i<nw;i++)
+	for(j=0;j<nh;j++)
+	for(k=0;k<nd;k++)
+	{
+		n=k*nh*nw+j*nw+i;
+
+		// material configuration
+		p[3*n+0]=d*i-Width/2;
+		p[3*n+1]=Height/2-d*j;
+		p[3*n+2]=d*k-Depth/2;
+		m++;
+	}
+
+	// create the topology of material tetrahedra
+	n=0;
+	for(i=0;i<nw-1;i++)
+	for(j=0;j<nh-1;j++)
+	for(k=0;k<nd-1;k++)
+	for(l=0;l<5;l++)
+		blockTetra(n++,i,j,k,tetraTopo[l],ge);
+
+	// create rest vertices, copying the positions of material vertices
+	// (the topology of rest tetrahedra is implicitly defined by its indices)
+	configureRestGeometry(ge);
+
+	// compute nodal volume
+	computeNodalVolume(ge);
+
+	return ge;
+}
+
 /**
 makeRing
 */
@@ -213,7 +321,7 @@ function makeRing(params) {
 		// material configuration
 		p[3*n+0]=R*Math.cos(theta);
 		p[3*n+1]=R*Math.sin(theta);
-		p[3*n+2]=th*(k/nz);
+		p[3*n+2]=d*k-d*th/2;
 		m++;
 	}
 
@@ -223,7 +331,7 @@ function makeRing(params) {
 	for(j=0;j<nxy-1;j++)
 	for(k=0;k<nz-1;k++)
 	for(l=0;l<5;l++)
-		ringTetra(n++,i,j,k,ringTetraTopo[l],ge);
+		ringTetra(n++,i,j,k,tetraTopo[l],ge);
 
 	// create rest vertices, copying the positions of material vertices
 	// (the topology of rest tetrahedra is implicitly defined by its indices)

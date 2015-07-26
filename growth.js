@@ -45,6 +45,42 @@ function growHomogeneous(ge,gr) {
 	}
 }
 /**
+growBlockBorderInstantaneous
+*/
+function growBlockBorderInstantaneous(ge,gr) {
+	var nw=ge.nw;
+	var nh=ge.nh;
+	var nd=ge.nd;
+	var t=ge.t;
+	var p=ge.p;
+	var r=ge.r;
+	var H=gr.G;
+
+	var i,j,k,l,m,n;
+	var numbox,numtet,im,ir;
+    
+    // tetrahedral boxes
+	j=nh-2;
+    for(i=0;i<nw-1;i++)
+    for(k=0;k<nd-1;k++)
+    {
+		// box element index
+		numbox=i*(nh-1)*(nd-1)+j*(nd-1)+k;
+		// box's tetrahedral element index
+		for(l=0;l<5;l++) {
+			numtet=numbox*5+l;
+			// tetrahedron's node index
+			for(m=0;m<4;m++) {
+				im=t[numtet*4+m];	// material vertex index
+				ir=numtet*4+m;		// rest vertex index
+				for(n=0;n<3;n++)
+					r[ir*3+n]=p[im*3+n]*H;
+			}
+		}
+    }
+}
+
+/**
 growRingBorderInstantaneous
 */
 function growRingBorderInstantaneous(ge,gr) {
@@ -155,7 +191,7 @@ function growRingTangentialInstantaneous(ge,gr) {
 		numbox=i*(nxy-1)*(nz-1)+j*(nz-1)+k;
 		for(l=0;l<5;l++) {
 			numtet=numbox*5+l;
-			a=ringTetraTopo[l].split(" ");
+			a=tetraTopo[l].split(" ");
 			for(m=0;m<4;m++) {
 				ir=numtet*4+m;		// index of rest vertex
 				di=parseInt(a[m].charAt(0));
