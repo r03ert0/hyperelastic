@@ -6,6 +6,7 @@
 var simulationParams;	// simulation parametres
 var simulation;			// simulation object
 var display;			// display
+var flag_running=true;
 
 function mySimulation(params) {
 	this.time=0;// history, actually
@@ -106,7 +107,7 @@ model display.
 */
 function simulationStep(si) {
 	
-	// if(si.time>0.1 || flag_running==false)	return;
+	if(si.time>0.1 || flag_running==false)	return;
 		
 	si.time+=si.dt;
 
@@ -115,7 +116,7 @@ function simulationStep(si) {
 	move(si.ge,si.me,si.dt);
 }
 
-/*
+
 function pauseResume(di) {
 	if(flag_running==true) {
 		flag_running=false;
@@ -123,9 +124,9 @@ function pauseResume(di) {
 	}
 	else {
 		flag_running=true;
-		animate(param);
-		param.growthFunc(param);
+	//	animate(param);
+	//	param.growthFunc(param);
 		$("#startStop").html("Stop");
 	}
 }
-*/
+
