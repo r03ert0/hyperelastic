@@ -120,7 +120,7 @@ function simulationStep(si) {
 function pauseResume(di) {
 	if(flag_running==true) {
 		flag_running=false;
-		$("#startStop").html("Start");
+		$("#startStop").html("Continue");
 	}
 	else {
 		flag_running=true;
