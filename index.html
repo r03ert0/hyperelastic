@@ -13,6 +13,8 @@
 		<table id="params"></table>
 		<div id="log" style="border:thin solid lightGrey;padding:10px"></div>
 		<button id="restart">Restart</button>
+		<button id="startStop">Stop</button>
+		<a id="saveParams">Save Params</button>
 	</div>
 	
 	<script src="algebra.js"></script>
@@ -57,6 +59,23 @@
 		simulation=initSimulation(simulationParams);
 		initMesh(display,simulation,simulationParams);
 	});
+
+	$("#startStop").click(function(){
+		pauseResume();
+	});
+
+	$("#saveParams").click(function(){
+		var data = getParams();
+		data.t = simulation.time.toFixed(4);
+		data.Ue = simulation.me.Ue.toFixed(2);
+		var paramExport = JSON.stringify( data );
+        console.log( paramExport );
+        var paramExportData = 'data:application/csv;charset=utf-8,' + encodeURIComponent( paramExport );
+        this.href = paramExportData;
+        this.target = '_blank';
+        this.download = 'params.json';
+	});
+
 
 	// init display
 	display=initDisplay(simulationParams);
