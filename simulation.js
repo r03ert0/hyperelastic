@@ -22,6 +22,8 @@ function mySimulation(params) {
 Main: init simulation
 */
 function initSimulation(params) {
+	flag_running=true;
+	$("#startStop").html("Stop");
 	var si=new mySimulation();
 	
 	// create geometry
