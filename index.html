@@ -14,7 +14,7 @@
 		<div id="log" style="border:thin solid lightGrey;padding:10px"></div>
 		<button id="restart">Restart</button>
 		<button id="startStop">Stop</button>
-		<button id="saveParams">Save Params</button>
+		<a id="saveParams" href=# >Save Params</a>
 	</div>
 	
 	<script src="algebra.js"></script>
@@ -68,12 +68,17 @@
 		var data = getParams();
 		data.t = simulation.time.toFixed(4);
 		data.Ue = simulation.me.Ue.toFixed(2);
+    	
+    	var name = prompt("Preset name",data.preset);
+    	if(name==undefined)
+    		return;
+    	data.preset=name;
+
 		var paramExport = JSON.stringify( data );
-        console.log( paramExport );
         var paramExportData = 'data:application/csv;charset=utf-8,' + encodeURIComponent( paramExport );
         this.href = paramExportData;
         this.target = '_blank';
-        this.download = 'params.json';
+        this.download = name+'.json';
 	});
 
 
