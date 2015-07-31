@@ -109,7 +109,8 @@ model display.
 */
 function simulationStep(si) {
 	
-	if(si.time>0.1 || flag_running==false)	return;
+	if(flag_running==false)
+		return;
 		
 	si.time+=si.dt;
 
