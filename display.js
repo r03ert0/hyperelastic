@@ -68,7 +68,7 @@ function initMesh(di,si,params) {
 		di.camera = new THREE.PerspectiveCamera( 75, w/h, 1, 100);
 	}
 	else {
-		var Z=6;
+		var Z=12;
 		di.camera = new THREE.OrthographicCamera( -Z*w/h,Z*w/h,Z,-Z,1, 100);
 	}
 	di.camera.position.z = 10;
@@ -79,16 +79,30 @@ function initMesh(di,si,params) {
 	di.trackball = new THREE.TrackballControls(di.camera,di.renderer.domElement);
 
 	di.geometry=new THREE.Geometry();
-	for(n=0;n<np;n++)
-		di.geometry.vertices.push(new THREE.Vector3(p[3*n+0],p[3*n+1],p[3*n+2]));
-	for(n=0;n<nt;n++) {
-		for(i=0;i<12;i+=3) {
-			v1=t[n*4+indx[i+0]];
-			v2=t[n*4+indx[i+1]];
-			v3=t[n*4+indx[i+2]];
-			di.geometry.faces.push(new THREE.Face3(v1,v2,v3));
-		}
-	}
+	
+	if(params.surfaceOnly) {
+        var nf=si.ge.nf;
+        var f=si.ge.f;
+        for(n=0;n<np;n++)
+            di.geometry.vertices.push(new THREE.Vector3(p[3*n+0],p[3*n+1],p[3*n+2]));
+        for(n=0;n<nf;n++) {
+            v1=f[n*3+0];
+            v2=f[n*3+1];
+            v3=f[n*3+2];
+            di.geometry.faces.push(new THREE.Face3(v1,v2,v3));
+        }
+	} else {
+        for(n=0;n<np;n++)
+            di.geometry.vertices.push(new THREE.Vector3(p[3*n+0],p[3*n+1],p[3*n+2]));
+        for(n=0;n<nt;n++) {
+            for(i=0;i<12;i+=3) {
+                v1=t[n*4+indx[i+0]];
+                v2=t[n*4+indx[i+1]];
+                v3=t[n*4+indx[i+2]];
+                di.geometry.faces.push(new THREE.Face3(v1,v2,v3));
+            }
+        }
+    }
 	di.geometry.computeFaceNormals();
 	di.geometry.computeVertexNormals();
 	
@@ -105,7 +119,22 @@ function initMesh(di,si,params) {
 		di.scene.remove(di.mesh);
 	di.mesh=new THREE.Mesh(di.geometry,di.material);
 	di.scene.add(di.mesh);
+	
+    $("#txt").remove();
+    
+    if(simulationParams.showVertexNumbers || simulationParams.showTriangleNumbers) {
+        $("body").append("<div id='txt' style='position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none'>");
+        if(simulationParams.showVertexNumbers) {
+            for(i=0;i<simulation.ge.np;i++)
+                $("#txt").append("<span class='v' id=v"+i+" style='position:absolute'>"+i+"</span>");
+        }
+        if(simulationParams.showTriangleNumbers) {
+            for(i=0;i<simulation.ge.nf;i++)
+                $("#txt").append("<span class='t' id=t"+i+" style='position:absolute'>"+i+"</span>");
+        }
+    }
 }
+
 /**
 updateMesh
 */
@@ -115,7 +144,7 @@ function updateMesh(di,si) {
 	var i;
 
 	for(i=0;i<np;i++) {
-		di.geometry.vertices[i].x=p[3*i];
+		di.geometry.vertices[i].x=p[3*i+0];
 		di.geometry.vertices[i].y=p[3*i+1];
 		di.geometry.vertices[i].z=p[3*i+2];
 	}
@@ -192,10 +221,12 @@ function animate() {
 	if(simulationParams.colormap=="deformation") {
 		if(simulationParams.geometry=="block")
 			block_deformationColor(simulation.ge);
+		else if(simulationParams.geometry=="ublock")
+			block_deformationColor(simulation.ge);
 		else if(simulationParams.geometry=="ring")
 			ring_deformationColor(simulation.ge);
 	}
-		
+
 	updateMesh(display,simulation);
 
 	display.geometry.computeFaceNormals();
@@ -206,6 +237,96 @@ function animate() {
 	display.geometry.colorsNeedUpdate=true;
 	
 	$("#log").html("t: "+simulation.time.toFixed(4)+" Ue:"+simulation.me.Ue.toFixed(2));
+
+	if(simulation.iter%10!==0)
+	    return;
+	    
+	// display collision information
+	if(simulationParams.showVertexNumbers || simulationParams.showTetraNumbers) {
+        var i,p,P=simulation.ge.p,F=simulation.ge.f;
+        
+        // show vertex indices
+        if(simulationParams.showVertexNumbers) {
+            for(i=0;i<simulation.ge.np;i++) {
+                p=screenXY(P[3*i+0],P[3*i+1],P[3*i+2]);
+                $("#v"+i).css({left:p.x,top:p.y});
+            }
+        }
+
+        // show triangle indices
+        if(simulationParams.showTriangleNumbers) {
+            for(i=0;i<simulation.ge.nf;i++) {
+                p=[
+                    (P[3*F[3*i+0]+0]+P[3*F[3*i+1]+0]+P[3*F[3*i+2]+0])/3,
+                    (P[3*F[3*i+0]+1]+P[3*F[3*i+1]+1]+P[3*F[3*i+2]+1])/3,
+                    (P[3*F[3*i+0]+2]+P[3*F[3*i+1]+2]+P[3*F[3*i+2]+2])/3
+                ];
+                p=screenXY(p[0],p[1],p[2]);
+                $("#t"+i).css({left:p.x,top:p.y});
+            }
+        }
+    }
+
+    // show collision response constraints
+    if(simulationParams.collision) {
+        var ci;
+        var p, pi;
+        var a, b, c;
+        var fi, fi0, fi1, fi2;
+        var q0, q1, q2, q;
+        for(ci in Collision.resp) {
+            pi=Collision.resp[ci].pIndex;
+            p=[simulation.ge.p[3*pi+0],simulation.ge.p[3*pi+1],simulation.ge.p[3*pi+2]];
+            a=Collision.resp[ci].a;
+            b=Collision.resp[ci].b;
+            c=Collision.resp[ci].c;
+            fi=Collision.resp[ci].qfIndex;
+            fi0=simulation.ge.f[3*fi+0];
+            fi1=simulation.ge.f[3*fi+1];
+            fi2=simulation.ge.f[3*fi+2];
+            q0=[simulation.ge.p[3*fi0+0],simulation.ge.p[3*fi0+1],simulation.ge.p[3*fi0+2]];
+            q1=[simulation.ge.p[3*fi1+0],simulation.ge.p[3*fi1+1],simulation.ge.p[3*fi1+2]];
+            q2=[simulation.ge.p[3*fi2+0],simulation.ge.p[3*fi2+1],simulation.ge.p[3*fi2+2]];
+            q=add(add(scale(q0,a),scale(q1,b)),scale(q2,c));
+            if(Collision.resp[ci].l==undefined) {
+                var lg=new THREE.Geometry();
+                lg.vertices.push(new THREE.Vector3(p[0],p[1],p[2]));
+                lg.vertices.push(new THREE.Vector3(q[0],q[1],q[2]));
+                var lm=new THREE.LineBasicMaterial({color:0xff0000,linewidth:1});
+                Collision.resp[ci].l=new THREE.Line(lg,lm);
+                display.scene.add(Collision.resp[ci].l);
+                console.log("new line");
+            }
+            Collision.resp[ci].l.geometry.vertices[0].set(p[0],p[1],p[2]);
+            Collision.resp[ci].l.geometry.vertices[1].set(q[0],q[1],q[2]);
+            Collision.resp[ci].l.geometry.verticesNeedUpdate=true;
+        }
+    }
+}
+/*
+function screenXY(x,y,z){
+	var projector = new THREE.Projector();
+	var vector = projector.projectVector( new THREE.Vector3(x,y,z), di.camera );
+	var result = new Object();
+	result.x = Math.round( vector.x * (window.innerWidth/2) ) + window.innerWidth/2;
+	result.y = Math.round( (0-vector.y) * (window.innerHeight/2) ) + window.innerHeight/2;
+	return result;
+}
+*/
+function screenXY(x,y,z) {
+var vector = new THREE.Vector3(x,y,z);
+var canvas = display.renderer.domElement;
+
+//vector.set( 1, 2, 3 );
+
+// map to normalized device coordinate (NDC) space
+vector.project( display.camera );
+
+// map to 2D screen space
+    return {
+        x: Math.round( (   vector.x + 1 ) * canvas.width  / 2 ),
+        y: Math.round( ( - vector.y + 1 ) * canvas.height / 2 )
+    }
 }
 /**
 Color map: from dark blue to dark red for negative to positive values

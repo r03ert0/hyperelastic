@@ -6,6 +6,17 @@
 	<script src="lib/jquery-1.8.2.min.js"></script>
 	<script src="lib/three.min.js"></script>
 	<script src="lib/TrackballControls.js"></script>
+	<style>
+	.v {
+	    color:black;
+	}
+	.t {
+	    color:gray;
+	}
+	.collide {
+	    color:red;
+	}
+	</style>
 </head>
 <body>
 
@@ -23,41 +34,50 @@
 	<script src="mechanics.js"></script>
 	<script src="display.js"></script>
 	<script src="simulation.js"></script>
+	<script src="collision.js"></script>
 	<script src="presets.js"></script>
 	<script>
 	var menus={
-		preset: ["Block Border","Ring Tangential","Ring Border"/*,"Sphere Surface","Ellipsoid Surface"*/],
-		growth: ["homogeneous","block border instantaneous","ring tangential instantaneous","ring border instantaneous"],
-		geometry: ["block","ring"/*,"sphere"*/],
+		preset: ["Block Border","U Block Collision","Ring Tangential","Ring Border","Sphere Surface","Sphere Surface Fine","Ellipsoid Surface"],
+		growth: ["homogeneous","block border instantaneous","ring tangential instantaneous","ring border instantaneous","surface homogeneous instantaneous"],
+		geometry: ["block","ublock","ring","sphere"],
 		colormap: ["normal","deformation"]
 	};
 	
+	// get model preset from URL (use BlockBorder by default)
 	var args=getArguments();
-	switch(args.model) {
-		case "BlockBorder":
-			simulationParams=clone(BlockBorder);
-			break;
-		case "RingTangential":
-			simulationParams=clone(RingTangential);
-			break;
-		case "RingBorder":
-			simulationParams=clone(RingBorder);
-			break;
-		case "Sphere":
-			simulationParams=clone(SphereSurface);
-			break;
-		case "Ellipsoid":
-			simulationParams=clone(EllipsoidSurface);
-			break;
-		default:
-			simulationParams=clone(BlockBorder);
-	}
+	simulationParams=getPresetParams(args.model);
 	setParams(simulationParams,menus);
+
+	// init display
+	display=initDisplay(simulationParams);
+
+	// start simulation
+	initSimulation(simulationParams)
+	.then(function(sim) {
+		simulation=sim;
+		initMesh(display,simulation,simulationParams);
+		// trigger animation
+		animate();
+	});
+
+	$("body").on('change', "#preset", function() {
+		simulationParams=getPresetParams($("#preset").val());
+		setParams(simulationParams,menus);
+		initSimulation(simulationParams)
+		.then(function(sim) {
+			simulation=sim;
+			initMesh(display,simulation,simulationParams);
+		});
+	});
 
 	$("#restart").click(function(){
 		simulationParams=getParams();
-		simulation=initSimulation(simulationParams);
-		initMesh(display,simulation,simulationParams);
+		initSimulation(simulationParams)
+		.then(function(sim) {
+			simulation=sim;
+			initMesh(display,simulation,simulationParams);
+		});
 	});
 
 	$("#startStop").click(function(){
@@ -80,17 +100,6 @@
         this.target = '_blank';
         this.download = name+'.json';
 	});
-
-
-	// init display
-	display=initDisplay(simulationParams);
-
-	// start simulation
-	simulation=initSimulation(simulationParams);
-	initMesh(display,simulation,simulationParams);
-
-	// trigger animation
-	animate();
 
 	function getArguments() {
 		var search = location.search.substring(1);
@@ -133,13 +142,6 @@
 					break;
 			}
 		}
-		$("#preset").change(function() {
-			simulationParams=getPresetParams();
-			setParams(simulationParams,menus);
-			simulation=initSimulation(simulationParams);
-			initMesh(display,simulation,simulationParams);
-		});
-
 	}
 	function getParams() {
 		var param={};
@@ -163,23 +165,39 @@
 	
 		return param;
 	}
-	function getPresetParams() {
-		switch($("#preset").val()) {
+	function getPresetParams(presetName) {
+		var param;
+		switch(presetName) {
+			case "BlockBorder":
 			case "Block Border":
 				param=clone(BlockBorder);
 				break;
+			case "UBlockCollision":
+			case "U Block Collision":
+				param=clone(UBlockCollision);
+				break;
+			case "RingTangential":
 			case "Ring Tangential":
 				param=clone(RingTangential);
 				break;
+			case "RingBorder":
 			case "Ring Border":
 				param=clone(RingBorder);
 				break;
+			case "Sphere":
 			case "Sphere Surface":
 				param=clone(SphereSurface);
 				break;
+			case "SphereFine":
+			case "Sphere Surface Fine":
+				param=clone(SphereSurfaceFine);
+				break;
+			case "Ellipsoid":
 			case "Ellipsoid Surface":
 				param=clone(EllipsoidSurface);
 				break;
+			default:
+				param=clone(BlockBorder);
 		}
 		return param;
 	}

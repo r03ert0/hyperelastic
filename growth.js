@@ -208,7 +208,7 @@ function growRingTangentialInstantaneous(ge,gr) {
 /**
 growSurface
 */
-function growSurfaceInstantaneous(ge,gr) {
+function growSurfaceHomogeneousInstantaneous(ge,gr) {
 	var nt=ge.nt;
 	var r=ge.r;
 	var	H=gr.G;	// homogeneous growth

@@ -1,11 +1,13 @@
 /**
-	Hyperelastic growth model, Roberto Toro 2015
-	Algebra
-*/
+ * @class algebra
+ * @brief Collision detection algorithm
+ */
 
 /**
-Matrix
-*/
+ * @function matrix
+ * @description Matrix
+ * @memberof algebra
+ */
 function matrix(a,b,c,d,e,f,g,h,i) {
 	this.a=a;
 	this.b=b;
@@ -18,9 +20,11 @@ function matrix(a,b,c,d,e,f,g,h,i) {
 	this.i=i;
 }
 /**
-Matrix inversion.
-@param {Matrix} m A 3x3 matrix represented as a vector
-*/
+ * @function invert
+ * @memberof algebra
+ * @description Matrix inversion.
+ * @param {Matrix} m A 3x3 matrix represented as a vector
+ */
 function invert(m) {
     var det;
     var w=new Object();
@@ -42,9 +46,41 @@ function invert(m) {
     return w;
 }
 /**
-Matrix determinant.
-@param {Matrix} a A 3x3 matrix represented as a vector
-*/
+ * @function mulInvMatVec
+ * @memberof algebra
+ * @description Multiply matrix inverse by vector
+ * @param {Matrix} m A 3x3 matrix represented as a vector, first row first
+ * @param {Vector} p #x1 vector
+ */
+function mulInvMatVec(m, p)
+{
+    var    det;
+    var    a,b,c,d,e,f,g,h,i;
+    
+    det = m.b*m.f*m.g + m.c*m.d*m.h + m.a*m.e*m.i - m.c*m.e*m.g - m.a*m.f*m.h - m.b*m.d*m.i;
+    
+    a=(m.e*m.i - m.f*m.h);
+    b=(m.c*m.h - m.b*m.i);
+    c=(m.b*m.f - m.c*m.e);
+    
+    d=(m.f*m.g - m.d*m.i);
+    e=(m.a*m.i - m.c*m.g);
+    f=(m.c*m.d - m.a*m.f);
+    
+    g=(m.d*m.h - m.e*m.g);
+    h=(m.b*m.g - m.a*m.h);
+    i=(m.a*m.e - m.b*m.d);
+    
+    return [ (p[0]*a + p[1]*d + p[2]*g)/det,
+             (p[0]*b + p[1]*e + p[2]*h)/det,
+             (p[0]*c + p[1]*f + p[2]*i)/det];
+}
+/**
+ * @function determinant
+ * @memberof algebra
+ * @description Matrix determinant.
+ * @param {Matrix} a A 3x3 matrix represented as a vector
+ */
 function determinant(a)
 {
     var det=
@@ -58,22 +94,44 @@ function determinant(a)
     return det;
 }
 /**
-Vector addition.
-@param {Vector} a 3x1 vector
-@param {Vector} b 3x1 vector
-*/
+ * @description Vector addition.
+ * @function add
+ * @memberof algebra
+ * @param {Vector} a 3x1 vector
+ * @param {Vector} b 3x1 vector
+ */
 function add(a,b) {
     return [a[0]+b[0],a[1]+b[1],a[2]+b[2]];
 }
 /**
-subtract
-*/
+ * @description subtract
+ * @function subtract
+ * @memberof algebra
+ */
 function subtract(a,b) {
     return [a[0]-b[0],a[1]-b[1],a[2]-b[2]];
 }
 /**
-addMat
-*/
+ * @description norm
+ * @function norm
+ * @memberof algebra
+ */
+function norm(a) {
+    return Math.sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]);
+}
+
+function dot(a,b) {
+    return a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+}
+
+function scale(a,t) {
+    return [a[0]*t,a[1]*t,a[2]*t];
+}
+/**
+ * @description addMat
+ * @function addMat
+ * @memberof algebra
+ */
 function addMat(a,b) {
     return {
         a:a.a+b.a, b:a.b+b.b, c:a.c+b.c,
@@ -81,8 +139,10 @@ function addMat(a,b) {
         g:a.g+b.g, h:a.h+b.h, i:a.i+b.i};
 }
 /**
-subMat
-*/
+ * @description subMat
+ * @function subMat
+ * @memberof algebra
+ */
 function subMat(a,b) {
     return {
         a:a.a-b.a, b:a.b-b.b, c:a.c-b.c,
@@ -90,30 +150,53 @@ function subMat(a,b) {
         g:a.g-b.g, h:a.h-b.h, i:a.i-b.i};
 }
 /**
-cross
-*/
+ * @description cross
+ * @function cross
+ * @memberof algebra
+ */
 function cross(a,b) {
     return [a[1]*b[2]-a[2]*b[1],
             a[2]*b[0]-a[0]*b[2],
             a[0]*b[1]-a[1]*b[0]];
 }
 /**
-transpose
-*/
+ * @description transpose
+ * @function transpose
+ * @memberof algebra
+ */
 function transpose(m) {
     return {a:m.a,b:m.d,c:m.g,
             d:m.b,e:m.e,f:m.h,
             g:m.c,h:m.f,i:m.i};
 }
 /**
-trace
-*/
+ * @description trace
+ * @function trace
+ * @memberof algebra
+ */
 function trace(m) {
     return m.a+m.e+m.i;
 }
 /**
-mulMat
-*/
+ * @description Make a matrix out of 3 vectors, one per column
+ * @function vecs2Mat
+ * @memberof algebra
+ * @param {Vector} a 3x1 vector
+ * @param {Vector} b 3x1 vector
+ * @param {Vector} c 3x1 vector
+ */
+function vecs2Mat(a, b, c)
+{
+    return { a:a[0],b:b[0],c:c[0],
+             d:a[1],e:b[1],f:c[1],
+             g:a[2],h:b[2],i:c[2] };
+}
+
+/**
+ * @description mulMat
+ * @function mulMat
+ * @memberof algebra
+ */
 function mulMat(a,b) {
     return {
     a:a.a*b.a+a.b*b.d+a.c*b.g,
@@ -129,8 +212,10 @@ function mulMat(a,b) {
     i:a.g*b.c+a.h*b.f+a.i*b.i };
 }
 /**
-mulMatVec
-*/
+ * @description mulMatVec
+ * @function mulMatVec
+ * @memberof algebra
+ */
 function mulMatVec(m,a) {
     return [
         m.a*a[0]+m.b*a[1]+m.c*a[2],
@@ -138,14 +223,18 @@ function mulMatVec(m,a) {
         m.g*a[0]+m.h*a[1]+m.i*a[2]];
 }
 /**
-mulVecSca
-*/
+ * @description mulVecSca
+ * @function mulVecSca
+ * @memberof algebra
+ */
 function mulVecSca(a,b) {
     return [a[0]*b,a[1]*b,a[2]*b];
 }
 /**
-mulMatSca
-*/
+ * @description mulMatSca
+ * @function mulMatSca
+ * @memberof algebra
+ */
 function mulMatSca(m,a) {
     return {
         a:m.a*a, b:m.b*a, c:m.c*a,
@@ -153,8 +242,32 @@ function mulMatSca(m,a) {
         g:m.g*a, h:m.h*a, i:m.i*a};
 }
 /**
-printMat
-*/
+ * @function solidAngle
+ * @memberof algebra
+ * @description compute the solid angle of a tetrahedron
+ * @param {Vector} a 1st vertex of tetrahedron
+ * @param {Vector} b 2nd vertex of tetrahedron
+ * @param {Vector} c 3rd vertex of tetrahedron
+ * @param {Vector} d 4th vertex of tetrahedron
+ */
+function solidAngle(a, b, c, d) {
+    var A=[a[0]-d[0],a[1]-d[1],a[2]-d[2]];
+    var B=[b[0]-d[0],b[1]-d[1],b[2]-d[2]];
+    var C=[c[0]-d[0],c[1]-d[1],c[2]-d[2]];
+    var detABC=A[0]*B[1]*C[2] + B[0]*C[1]*A[2] + C[0]*A[1]*B[2] - A[0]*C[1]*B[2] - B[0]*A[1]*C[2] - C[0]*B[1]*A[2];
+    var na=Math.sqrt(A[0]*A[0]+A[1]*A[1]+A[2]*A[2]);
+    var nb=Math.sqrt(B[0]*B[0]+B[1]*B[1]+B[2]*B[2]);
+    var nc=Math.sqrt(C[0]*C[0]+C[1]*C[1]+C[2]*C[2]);
+    var divisor = na*nb*nc + (A[0]*B[0] + A[1]*B[1] + A[2]*B[2])*nc + (B[0]*C[0] + B[1]*C[1] + B[2]*C[2])*na + (C[0]*A[0] + C[1]*A[1] + C[2]*A[2])*nb;
+    var sabc=2*Math.atan(detABC/divisor);
+    
+    return sabc;
+}
+/**
+ * @description printMat
+ * @function printMat
+ * @memberof algebra
+ */
 function printMat(M,name) {
     console.log(name+":",
                 M.a+" "+M.b+" "+M.c,
@@ -162,8 +275,10 @@ function printMat(M,name) {
                 M.g+" "+M.h+" "+M.i);
 }
 /**
-printVec
-*/
+ * @description printVec
+ * @function printVec
+ * @memberof algebra
+ */
 function printVec(V,name) {
     console.log(name+": "+V[0]+","+V[1]+","+V[2]);
 }
