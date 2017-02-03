@@ -1,9 +1,10 @@
 /**
-Hyperelastic growth model, Roberto Toro 2015
-Display
-
-Depends on geometry.js, three.js and simulation.js
-*/
+ * @page Display
+ * Hyperelastic growth model, Roberto Toro 2015
+ * Display
+ *
+ * Depends on geometry.js, three.js and simulation.js
+ */
 
 function myDisplay() {
 	this.renderer=null;		// three.js renderer
@@ -22,8 +23,9 @@ function myDisplay() {
 }
 
 /**
-Initialises the three.js render
-*/
+ * @function initDisplay
+ * @description Initialises the three.js render
+ */
 function initDisplay(params) {
 	var di = new myDisplay();
 	var n,i,j,k,v1,v2,v3;
@@ -44,8 +46,8 @@ function initDisplay(params) {
 }
 
 /**
-initMesh
-*/
+ * @function initMesh
+ */
 function initMesh(di,si,params) {
 	var np=si.ge.np;
 	var nt=si.ge.nt;
@@ -136,8 +138,8 @@ function initMesh(di,si,params) {
 }
 
 /**
-updateMesh
-*/
+ * @function updateMesh
+ */
 function updateMesh(di,si) {
 	var np=si.ge.np;
 	var p=si.ge.p;
@@ -152,8 +154,8 @@ function updateMesh(di,si) {
 }
 
 /**
-updateRingLines
-*/
+ * @function updateRingLines
+ */
 function updateRingLines(ge) {
 	var ntheta=ge.ntheta;
 	var nxy=ge.nxy;
@@ -207,10 +209,9 @@ function updateRingLines(ge) {
 }
 
 /**
-Animation function.
-Request a new frame, call the render function, call the simulation functions and update
-model display.
-*/
+ * @function animate
+ * @description Animation function. Request a new frame, call the render function, call the simulation functions and update model display
+ */
 function animate() {
 	requestAnimationFrame(animate);
 	display.renderer.render(display.scene,display.camera);
@@ -225,6 +226,8 @@ function animate() {
 			block_deformationColor(simulation.ge);
 		else if(simulationParams.geometry=="ring")
 			ring_deformationColor(simulation.ge);
+		else if(simulationParams.geometry=="surface")
+			surface_deformationColor(simulation.ge);
 	}
 
 	updateMesh(display,simulation);
@@ -303,16 +306,9 @@ function animate() {
         }
     }
 }
-/*
-function screenXY(x,y,z){
-	var projector = new THREE.Projector();
-	var vector = projector.projectVector( new THREE.Vector3(x,y,z), di.camera );
-	var result = new Object();
-	result.x = Math.round( vector.x * (window.innerWidth/2) ) + window.innerWidth/2;
-	result.y = Math.round( (0-vector.y) * (window.innerHeight/2) ) + window.innerHeight/2;
-	return result;
-}
-*/
+/**
+ * @function screenXY
+ */
 function screenXY(x,y,z) {
 var vector = new THREE.Vector3(x,y,z);
 var canvas = display.renderer.domElement;
@@ -329,9 +325,10 @@ vector.project( display.camera );
     }
 }
 /**
-Color map: from dark blue to dark red for negative to positive values
-@param {float} x Value between -1 and 1. Values outside the boundaries are clamped.
-*/
+ * @function bdarkb2r
+ * @description Color map: from dark blue to dark red for negative to positive values
+ * @param {float} x Value between -1 and 1. Values outside the boundaries are clamped.
+ */
 function bdarkb2r(x) {
 	var	r,g,b;
 
@@ -344,9 +341,10 @@ function bdarkb2r(x) {
 	return {red:r,green:b,blue:g};
 }
 /**
-Color map: from black to white for negative to positive values.
-@param {float} x Value between -1 and 1. Values outside the boundaries are clamped.
-*/
+ * @function black2white
+ * @description Color map: from black to white for negative to positive values.
+ * @param {float} x Value between -1 and 1. Values outside the boundaries are clamped.
+ */
 function black2white(x) {
 	var	r,g,b,w;
 
@@ -360,8 +358,9 @@ function black2white(x) {
 	return {red:r,green:b,blue:g*0.95};
 }
 /**
-Display deformation of a ring geometry as text
-*/
+ * @function ring_deformationText
+ * @description Display deformation of a ring geometry as text
+ */
 function ring_deformationText(ge) {
 	var ntheta=ge.ntheta;
 	var nxy=ge.nxy;
@@ -412,8 +411,9 @@ function ring_deformationText(ge) {
 	}
 }
 /**
-Map deformation of a ring geometry into colors
-*/
+ * @function ring_deformationColor
+ * @description Map deformation of a ring geometry into colors
+ */
 var minJ=0,maxJ=1;
 function ring_deformationColor(ge) {
 	var ntheta=ge.ntheta;
@@ -473,8 +473,9 @@ function ring_deformationColor(ge) {
 	maxJ=tmaxJ;
 }
 /**
-Map deformation of a block geometry into colors
-*/
+ * @function block_deformationColor
+ * @description Map deformation of a block geometry into colors
+ */
 var minJ=0,maxJ=1;
 function block_deformationColor(ge) {
 	var nw=ge.nw;
@@ -532,7 +533,7 @@ function block_deformationColor(ge) {
 	minJ=tminJ;
 	maxJ=tmaxJ;
 }
-/**
+/*
 drawForce
 */
 /*
@@ -547,25 +548,28 @@ function drawForce(n,f) {
 }
 */
 /**
-Map deformation of a surface geometry into colors.
-*/
-function surface_deformationColor() {
+ * @function surface_deformationColor
+ * @description Map deformation of a surface geometry into colors.
+ */
+function surface_deformationColor(ge) {
 	var i,j,k,l,m,n;
 	var numbox,numtet,im,ir;
 	var J,vol0,vol1;
 	var	tmp=0,mintmp,maxtmp,val;
 	var vval,vval2,nval;
+	
+	var nsp=ge.np/2;
 
-	vval=new Float32Array(geometry.vertices.length);
-	vval2=new Float32Array(geometry.vertices.length);
-	nval=new Uint8Array(geometry.vertices.length);
-	for(i=0;i<geometry.vertices.length;i++)
+	vval=new Float32Array(nsp);
+	vval2=new Float32Array(nsp);
+	nval=new Uint8Array(nsp);
+	for(i=0;i<nsp;i++)
 		vval[i]=0;
-	for(i=0;i<geometry.vertices.length;i++)
+	for(i=0;i<nsp;i++)
 		nval[i]=0;
 
 	// tetrahedral prisms
-	for(i=0;i<nt;i+=3)
+	for(i=0;i<ge.nt;i+=3)
 	{
 		vol0=0;
 		vol1=0;
@@ -573,15 +577,15 @@ function surface_deformationColor() {
 			n=i+l;
 
 			vol0+=tetraVol(
-						r[3*(4*n+0)+0],r[3*(4*n+0)+1],r[3*(4*n+0)+2],
-						r[3*(4*n+1)+0],r[3*(4*n+1)+1],r[3*(4*n+1)+2],
-						r[3*(4*n+2)+0],r[3*(4*n+2)+1],r[3*(4*n+2)+2],
-						r[3*(4*n+3)+0],r[3*(4*n+3)+1],r[3*(4*n+3)+2]);
+						ge.r[3*(4*n+0)+0],ge.r[3*(4*n+0)+1],ge.r[3*(4*n+0)+2],
+						ge.r[3*(4*n+1)+0],ge.r[3*(4*n+1)+1],ge.r[3*(4*n+1)+2],
+						ge.r[3*(4*n+2)+0],ge.r[3*(4*n+2)+1],ge.r[3*(4*n+2)+2],
+						ge.r[3*(4*n+3)+0],ge.r[3*(4*n+3)+1],ge.r[3*(4*n+3)+2]);
 			vol1+=tetraVol(
-						p[3*t[4*n+0]+0],p[3*t[4*n+0]+1],p[3*t[4*n+0]+2],
-						p[3*t[4*n+1]+0],p[3*t[4*n+1]+1],p[3*t[4*n+1]+2],
-						p[3*t[4*n+2]+0],p[3*t[4*n+2]+1],p[3*t[4*n+2]+2],
-						p[3*t[4*n+3]+0],p[3*t[4*n+3]+1],p[3*t[4*n+3]+2]);
+						ge.p[3*t[4*n+0]+0],ge.p[3*t[4*n+0]+1],ge.p[3*t[4*n+0]+2],
+						ge.p[3*t[4*n+1]+0],ge.p[3*t[4*n+1]+1],ge.p[3*t[4*n+1]+2],
+						ge.p[3*t[4*n+2]+0],ge.p[3*t[4*n+2]+1],ge.p[3*t[4*n+2]+2],
+						ge.p[3*t[4*n+3]+0],ge.p[3*t[4*n+3]+1],ge.p[3*t[4*n+3]+2]);
 		}
 		J=Math.log(vol1/vol0);
 
@@ -598,12 +602,12 @@ function surface_deformationColor() {
 		for(l=0;l<3;l++) {
 			n=i+l;
 			for(m=0;m<4;m++) {
-				vval[geometry.faces[n*4+m].a]+=val;
-				vval[geometry.faces[n*4+m].b]+=val;
-				vval[geometry.faces[n*4+m].c]+=val;
-				nval[geometry.faces[n*4+m].a]+=1;
-				nval[geometry.faces[n*4+m].b]+=1;
-				nval[geometry.faces[n*4+m].c]+=1;
+				vval[ge.f[n*4+m].a]+=val;
+				vval[ge.f[n*4+m].b]+=val;
+				vval[ge.f[n*4+m].c]+=val;
+				nval[ge.f[n*4+m].a]+=1;
+				nval[ge.f[n*4+m].b]+=1;
+				nval[ge.f[n*4+m].c]+=1;
 			}
 		}
 	}
@@ -611,41 +615,41 @@ function surface_deformationColor() {
 	minJ=mintmp;
 
 	// from face deformation to vertex colors
-	for(i=0;i<geometry.vertices.length;i++) {
+	for(i=0;i<nsp;i++) {
 		vval[i]=vval[i]/nval[i];
 	}
 	for(j=0;j<5;j++) {
-		for(i=0;i<geometry.vertices.length;i++) {
+		for(i=0;i<nsp;i++) {
 			vval2[i]=0;
 			nval[i]=0;
 		}
-		for(i=0;i<geometry.faces.length;i++) {
-			vval2[geometry.faces[i].a]+=vval[geometry.faces[i].b]+vval[geometry.faces[i].c];
-			vval2[geometry.faces[i].b]+=vval[geometry.faces[i].c]+vval[geometry.faces[i].a];
-			vval2[geometry.faces[i].c]+=vval[geometry.faces[i].a]+vval[geometry.faces[i].b];
-			nval[geometry.faces[i].a]+=2;
-			nval[geometry.faces[i].b]+=2;
-			nval[geometry.faces[i].c]+=2;
+		for(i=0;i<ge.f.length;i++) {
+			vval2[ge.f[i].a]+=vval[ge.f[i].b]+vval[ge.f[i].c];
+			vval2[ge.f[i].b]+=vval[ge.f[i].c]+vval[ge.f[i].a];
+			vval2[ge.f[i].c]+=vval[ge.f[i].a]+vval[ge.f[i].b];
+			nval[ge.f[i].a]+=2;
+			nval[ge.f[i].b]+=2;
+			nval[ge.f[i].c]+=2;
 		}
-		for(i=0;i<geometry.vertices.length;i++) {
+		for(i=0;i<nsp;i++) {
 			vval[i]=vval2[i]/nval[i];
 		}
 	}
 	mintmp=vval[0];
 	maxtmp=vval[0];
-	for(i=0;i<geometry.vertices.length;i++) {
+	for(i=0;i<nsp;i++) {
 		if(vval[i]>maxtmp)
 			maxtmp=vval[i];
 		if(vval[i]<mintmp)
 			mintmp=vval[i];
 	}
-	for(i=0;i<geometry.vertices.length;i++)
+	for(i=0;i<nsp;i++)
 		vval[i]=(vval[i]-mintmp)/(maxtmp-mintmp);    
-	for(i=0;i<geometry.vertices.length;i++)
+	for(i=0;i<nsp;i++)
 		color[i].setRGB(vval[i],vval[i],vval[i]);
-	for(i=0;i<geometry.faces.length;i++) {
-		geometry.faces[i].vertexColors[0]=color[geometry.faces[i].a];
-		geometry.faces[i].vertexColors[1]=color[geometry.faces[i].b];
-		geometry.faces[i].vertexColors[2]=color[geometry.faces[i].c];
+	for(i=0;i<ge.f.length;i++) {
+		ge.f[i].vertexColors[0]=color[ge.f[i].a];
+		ge.f[i].vertexColors[1]=color[ge.f[i].b];
+		ge.f[i].vertexColors[2]=color[ge.f[i].c];
 	}
 }

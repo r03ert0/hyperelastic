@@ -1,12 +1,27 @@
 /**
- * @class algebra
- * @brief Collision detection algorithm
+ * @page Algebra
+ * Algebra functions that make your life better.
+ */
+
+/**
+ * @library hyperelastic
+ * @version 0.0.1
+ * @brief Hyperelastic growth simulator in javascript
  */
 
 /**
  * @function matrix
- * @description Matrix
- * @memberof algebra
+ * @description Makes a 3x3 matrix object out of 9 float values
+ * @param {float} a 1st row, 1st column
+ * @param {float} b
+ * @param {float} c
+ * @param {float} d 2nd row, 1st column
+ * @param {float} e
+ * @param {float} f
+ * @param {float} g 3rd row, 1st column
+ * @param {float} h
+ * @param {float} i
+ * @return {Matrix} A matrix object
  */
 function matrix(a,b,c,d,e,f,g,h,i) {
 	this.a=a;
@@ -21,9 +36,9 @@ function matrix(a,b,c,d,e,f,g,h,i) {
 }
 /**
  * @function invert
- * @memberof algebra
  * @description Matrix inversion.
  * @param {Matrix} m A 3x3 matrix represented as a vector
+ * @return {Matrix} The inverse of matrix m
  */
 function invert(m) {
     var det;
@@ -47,10 +62,9 @@ function invert(m) {
 }
 /**
  * @function mulInvMatVec
- * @memberof algebra
  * @description Multiply matrix inverse by vector
  * @param {Matrix} m A 3x3 matrix represented as a vector, first row first
- * @param {Vector} p #x1 vector
+ * @param {Vector} p 3x1 vector
  */
 function mulInvMatVec(m, p)
 {
@@ -77,7 +91,6 @@ function mulInvMatVec(m, p)
 }
 /**
  * @function determinant
- * @memberof algebra
  * @description Matrix determinant.
  * @param {Matrix} a A 3x3 matrix represented as a vector
  */
@@ -96,7 +109,6 @@ function determinant(a)
 /**
  * @description Vector addition.
  * @function add
- * @memberof algebra
  * @param {Vector} a 3x1 vector
  * @param {Vector} b 3x1 vector
  */
@@ -106,7 +118,6 @@ function add(a,b) {
 /**
  * @description subtract
  * @function subtract
- * @memberof algebra
  */
 function subtract(a,b) {
     return [a[0]-b[0],a[1]-b[1],a[2]-b[2]];
@@ -114,7 +125,6 @@ function subtract(a,b) {
 /**
  * @description norm
  * @function norm
- * @memberof algebra
  */
 function norm(a) {
     return Math.sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]);
@@ -130,7 +140,6 @@ function scale(a,t) {
 /**
  * @description addMat
  * @function addMat
- * @memberof algebra
  */
 function addMat(a,b) {
     return {
@@ -141,7 +150,6 @@ function addMat(a,b) {
 /**
  * @description subMat
  * @function subMat
- * @memberof algebra
  */
 function subMat(a,b) {
     return {
@@ -152,7 +160,6 @@ function subMat(a,b) {
 /**
  * @description cross
  * @function cross
- * @memberof algebra
  */
 function cross(a,b) {
     return [a[1]*b[2]-a[2]*b[1],
@@ -162,7 +169,6 @@ function cross(a,b) {
 /**
  * @description transpose
  * @function transpose
- * @memberof algebra
  */
 function transpose(m) {
     return {a:m.a,b:m.d,c:m.g,
@@ -172,7 +178,6 @@ function transpose(m) {
 /**
  * @description trace
  * @function trace
- * @memberof algebra
  */
 function trace(m) {
     return m.a+m.e+m.i;
@@ -180,7 +185,6 @@ function trace(m) {
 /**
  * @description Make a matrix out of 3 vectors, one per column
  * @function vecs2Mat
- * @memberof algebra
  * @param {Vector} a 3x1 vector
  * @param {Vector} b 3x1 vector
  * @param {Vector} c 3x1 vector
@@ -195,7 +199,6 @@ function vecs2Mat(a, b, c)
 /**
  * @description mulMat
  * @function mulMat
- * @memberof algebra
  */
 function mulMat(a,b) {
     return {
@@ -214,7 +217,6 @@ function mulMat(a,b) {
 /**
  * @description mulMatVec
  * @function mulMatVec
- * @memberof algebra
  */
 function mulMatVec(m,a) {
     return [
@@ -225,7 +227,6 @@ function mulMatVec(m,a) {
 /**
  * @description mulVecSca
  * @function mulVecSca
- * @memberof algebra
  */
 function mulVecSca(a,b) {
     return [a[0]*b,a[1]*b,a[2]*b];
@@ -233,7 +234,6 @@ function mulVecSca(a,b) {
 /**
  * @description mulMatSca
  * @function mulMatSca
- * @memberof algebra
  */
 function mulMatSca(m,a) {
     return {
@@ -243,8 +243,7 @@ function mulMatSca(m,a) {
 }
 /**
  * @function solidAngle
- * @memberof algebra
- * @description compute the solid angle of a tetrahedron
+ * @description Compute the solid angle of a tetrahedron. Reference Jacobson et al (2013) "Robust Inside-Outside Segmentation using Generalized Winding Numbers"
  * @param {Vector} a 1st vertex of tetrahedron
  * @param {Vector} b 2nd vertex of tetrahedron
  * @param {Vector} c 3rd vertex of tetrahedron
@@ -266,7 +265,6 @@ function solidAngle(a, b, c, d) {
 /**
  * @description printMat
  * @function printMat
- * @memberof algebra
  */
 function printMat(M,name) {
     console.log(name+":",
@@ -277,7 +275,6 @@ function printMat(M,name) {
 /**
  * @description printVec
  * @function printVec
- * @memberof algebra
  */
 function printVec(V,name) {
     console.log(name+": "+V[0]+","+V[1]+","+V[2]);

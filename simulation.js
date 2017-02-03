@@ -1,7 +1,8 @@
 /**
-	Hyperelastic growth model, Roberto Toro 2015
-	Main
-*/
+ * @page Simulation
+ * Organisation of all simulation code
+ */
+
 
 var simulationParams;	// simulation parametres
 var simulation;			// simulation object
@@ -20,8 +21,8 @@ function mySimulation(params) {
 }
 
 /**
-Main: init simulation
-*/
+ * @function initSimulation
+ */
 function initSimulation(params) {
 	var def=$.Deferred();
 	
@@ -41,8 +42,8 @@ function initSimulation(params) {
 		case "ring":
 			make=makeRing;
 			break;
-		case "sphere":
-			make=makeSphere;
+		case "surface":
+			make=makeSurface;
 			break;
 	}
 	
@@ -95,8 +96,8 @@ function initSimulation(params) {
 }
 
 /**
-computeTimeStep
-*/
+ * @function computeTimeStep
+ */
 function computeTimeStep(ge,me) {
 	var a=0;	// average mesh spacing
 	var n1,n2;
@@ -124,10 +125,9 @@ function computeTimeStep(ge,me) {
 }
 
 /**
-Simulation step
-Request a new frame, call the render function, call the simulation functions and update
-model display.
-*/
+ * @function simulationStep
+ * @description Simulation step. Request a new frame, call the render function, call the simulation functions and update model display.
+ */
 function simulationStep(si) {
 	
 	if(flag_running==false)

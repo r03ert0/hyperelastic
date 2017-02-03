@@ -1,10 +1,8 @@
 /**
-	Hyperelastic growth model, Roberto Toro 2015
-	Mechanics
-	
-	The myMechanics object stores mechanical properties of the model, as well
-	as vectors for the force and velocity of each material vertex.
-*/
+ * @page Mechanics
+ *	The myMechanics object stores mechanical properties of the model, as well
+ *	as vectors for the force and velocity of each material vertex.
+ */
 
 function myMechanics() {
 	this.gamma=0.1;		// damping
@@ -18,8 +16,9 @@ function myMechanics() {
 }
 
 /**
-initMechanics
-*/
+ * @function initMechanics
+ * @description Initialises the mechanics code
+ */
 function initMechanics(ge,params) {
 	var me = new myMechanics();
 	var np=ge.np;
@@ -39,8 +38,9 @@ function initMechanics(ge,params) {
 	return me;
 }
 /**
-tetraElasticity
-*/
+ * @function tetraElasticity
+ * @description Computes elastic forces for a deformed tetrahedron
+ */
 function tetraElasticity(ge,me) {
     var np=ge.np;
     var nt=ge.nt;
@@ -170,10 +170,9 @@ function tetraElasticity(ge,me) {
     return sumFtet;
 }
 /**
-linElasticity.
-To Do: This function is now specific to the surface models. It should be written
-       in generic terms.
-*/
+ * @function linElasticity
+ * @todo This function is now specific to the surface models. It should be written in generic terms.
+ */
 function linElasticity(ge,me) {
     var nt=ge.nt;
     var p=ge.p;
@@ -214,8 +213,9 @@ function linElasticity(ge,me) {
 	return sumFlin;
 }
 /**
-Integrate velocity into displacement
-*/
+ * @function move
+ * @description Integrate velocity into displacement
+ */
 function move(ge,me,dt) {
 	var np=ge.np;
 	var p=ge.p;

@@ -1,12 +1,12 @@
 /**
-	Hyperelastic growth model, Roberto Toro 2015
-	Geometry functions
-	
-	The myGeometry object stores the material and rest configurations.
-	There is also code to generate ring and brain geometries
-	
-	Depends on algebra.js 
-*/
+ * @page Geometry
+ * Geometry functions
+ *
+ *	The myGeometry object stores the material and rest configurations.
+ *	There is also code to generate ring and brain geometries
+ *	
+ *	Depends on algebra.js 
+ */
 
 var tetraTopo=[
 	"001 010 100 111",
@@ -49,9 +49,9 @@ function tetraVertices(ge, i) {
 }
 
 /**
-tetraVol
-returns the volume of a tetrahedron
-*/
+ * @function tetraVol
+ * @return the volume of a tetrahedron
+ */
 function tetraVol(a,b,c, d,e,f, g,h,i, j,k,l)
 {
     var m=new Object();
@@ -70,7 +70,7 @@ function tetraVol(a,b,c, d,e,f, g,h,i, j,k,l)
     vol=determinant(m)/6;
     return vol;
 }
-/**
+/*
 allTetraVol
 returns the total volume of a tetrahedral mesh
 */
@@ -130,7 +130,7 @@ function vertexOutsideTetras(p, ge) {
     }
     return true;
 }
-/**
+/*
 configureRestGeometry
 initialises a rest geometry to the actual geometry. Topology is different, however,
 because all tetrahedra are disconnected.
@@ -147,7 +147,7 @@ function configureRestGeometry(ge) {
 	for(k=0;k<3;k++)
 		r[(4*i+j)*3+k]=p[t[4*i+j]*3+k];
 }
-/**
+/*
 computeNodalVolume
 computes the volume measured at each point of a tetrahedral mesh as the sum of
 1/4 of the volume of each of the tetrahedra to which it belongs.
@@ -185,7 +185,7 @@ function computeNodalVolume(ge) {
 
 */
 
-/**
+/*
 Get global index of a tetrahedron within a block based on its width, height and depth
 indices.
 @param {integer} i width index of the tetrahedron
@@ -195,7 +195,7 @@ indices.
 function blockVind(i,j,k,nw,nh) {
     return k*nh*nw+j*nw+i;
 }
-/**
+/*
 Create a new block tetrahedron topology.
 @param {integer} n global index of the tetrahedron
 @param {integer} i base width index of the tetrahedron
@@ -220,7 +220,7 @@ function blockTetra(n,i,j,k,s,ge) {
     t[4*n+2]=b[2];
     t[4*n+3]=b[3];
 }
-/**
+/*
 Get global index of a tetrahedron within a ring based on its angular, radial and depth
 indices.
 @param {integer} i angular index of the tetrahedron
@@ -230,7 +230,7 @@ indices.
 function ringVind(i,j,k,ntheta,nxy) {
     return k*nxy*ntheta+j*ntheta+i;
 }
-/**
+/*
 Create a new ring tetrahedron topology.
 @param {integer} n global index of the tetrahedron
 @param {integer} i base angular index of the tetrahedron
@@ -255,7 +255,7 @@ function ringTetra(n,i,j,k,s,ge) {
     t[4*n+2]=b[2];
     t[4*n+3]=b[3];
 }
-/**
+/*
 makeBlock
 */
 function makeBlock(params) {
@@ -331,7 +331,7 @@ function makeBlock(params) {
 	return def.resolve(ge).promise();
 }
 
-/**
+/*
 makeUBlock
 */
 function makeUBlock(params) {
@@ -488,7 +488,7 @@ function makeUBlock(params) {
 
 	return def.resolve(ge).promise();
 }
-/**
+/*
 makeRing
 */
 function makeRing(params) {
@@ -568,8 +568,8 @@ function makeRing(params) {
 	return def.resolve(ge).promise();
 }
 	
-/**
-makeSphere
+/*
+makeSurface
 Generate a 1 elastic tetrahedra thick shell from a surface mesh encoded in json format,
 and a plexus of linear elastic elements linking the internal surface of the mesh to the
 center of the model.
@@ -597,7 +597,7 @@ and a',b','c are the same vertices displaced along the normal of the surface.
 @param {Object} param Object with model parametres
 @param {Object} surf JSON Object with surface data
 */
-function makeSphere(params) {
+function makeSurface(params) {
 	var def=$.Deferred();
 	$.getJSON(params.url,function(surf) {
 		var ge = new myGeometry();

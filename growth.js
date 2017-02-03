@@ -1,11 +1,11 @@
 /**
-	Hyperelastic growth model, Roberto Toro 2015
-	Growth functions
-	
-	Grow functions affect the rest configuration of the model's geometry
-	
-	Depends on algebra.js and geometry.js
-*/
+ * @page Growth
+ *	Growth functions
+ *	
+ *	Grow functions affect the rest configuration of the model's geometry
+ *	
+ *	Depends on algebra.js and geometry.js
+ */
 
 function myGrowth() {
 	// Variables storing growth parametres
@@ -20,8 +20,8 @@ function initGrowth(params) {
 	return gr;
 }
 /**
-growHomogeneous
-*/
+ * @function growHomogeneous
+ */
 function growHomogeneous(ge,gr) {
 	var nt=ge.nt;
 	var t=ge.t;
@@ -45,8 +45,8 @@ function growHomogeneous(ge,gr) {
 	}
 }
 /**
-growBlockBorderInstantaneous
-*/
+ * @function growBlockBorderInstantaneous
+ */
 function growBlockBorderInstantaneous(ge,gr) {
 	var nw=ge.nw;
 	var nh=ge.nh;
@@ -81,8 +81,8 @@ function growBlockBorderInstantaneous(ge,gr) {
 }
 
 /**
-growRingBorderInstantaneous
-*/
+ * @function growRingBorderInstantaneous
+ */
 function growRingBorderInstantaneous(ge,gr) {
 	var ntheta=ge.ntheta;
 	var nxy=ge.nxy;
@@ -116,8 +116,8 @@ function growRingBorderInstantaneous(ge,gr) {
     }
 }
 /**
-growRingBorderProgressive
-*/
+ * @function growRingBorderProgressive
+ */
 function growRingBorderProgressive(ge,gr,time) {
 	var ntheta=ge.ntheta;
 	var nxy=ge.nxy;
@@ -155,19 +155,9 @@ function growRingBorderProgressive(ge,gr,time) {
     }
 }
 /**
-growRingTangentialInstantaneous. Each vertex in the original ring has coordinates x,y,z. The coordinates
-x,y are in the plane of the ring, z is in the plane of its thickness. The function
-growTangential produces a tangential expansion of the ring at rest, i.e., it alters the
-x,y coordinates, without changing the z coordinate (thickness), nor the radial size of
-each finite element.
-WRONG FOLLOWS:
-This is achieved by
-displacing each x,y point radially. The amount of displacement is such that the angle
-supported by each finite element will be multiplied by the dilatation parametre D. The
-total perimeter of a ring at a distance R from the central axis is 2*pi*R and will become
-2*pi*R*D. Then, each point x,y at distance R has to be displaced to a distance R*D, i.e.,
-they have to be multiplied by a factor D such that (x*D)^2+(y*D)^2=(R*D)^2.
-*/
+ * @function growRingTangentialInstantaneous
+ * @description Each vertex in the original ring has coordinates x,y,z. The coordinates x,y are in the plane of the ring, z is in the plane of its thickness. The function growTangential produces a tangential expansion of the ring at rest, i.e., it alters the x,y coordinates, without changing the z coordinate (thickness), nor the radial size of each finite element. WRONG FOLLOWS: This is achieved by displacing each x,y point radially. The amount of displacement is such that the angle supported by each finite element will be multiplied by the dilatation parametre D. The total perimeter of a ring at a distance R from the central axis is 2*pi*R and will become 2*pi*R*D. Then, each point x,y at distance R has to be displaced to a distance R*D, i.e., they have to be multiplied by a factor D such that (x*D)^2+(y*D)^2=(R*D)^2.
+ */
 function growRingTangentialInstantaneous(ge,gr) {
 	var ntheta=ge.ntheta;
 	var nxy=ge.nxy;
@@ -206,8 +196,8 @@ function growRingTangentialInstantaneous(ge,gr) {
 	}
 }
 /**
-growSurface
-*/
+ * @function growSurface
+ */
 function growSurfaceHomogeneousInstantaneous(ge,gr) {
 	var nt=ge.nt;
 	var r=ge.r;

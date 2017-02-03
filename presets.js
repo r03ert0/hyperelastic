@@ -1,3 +1,7 @@
+/**
+ * @page Presets
+ */
+
 /* Model 1: Ring, Border growth */
 var RingBorder=new Object({
     preset:"Ring Border",
@@ -59,7 +63,7 @@ var SphereSurface=new Object({
     preset:"Sphere Surface",
     
     // geometry
-    geometry:"sphere",
+    geometry:"surface",
     url:"data/sphere-1115.json", // surface mesh URL
     th:0.3,                          // surface thickness in mm
     fibres:true,
@@ -93,7 +97,7 @@ var SphereSurfaceFine=new Object({
     preset:"Sphere Surface Fine",
     
     // geometry
-    geometry:"sphere",
+    geometry:"surface",
     url:"data/sphere-2500.json", // surface mesh URL
     th:0.2,                          // surface thickness in mm
     fibres:true,
@@ -113,15 +117,16 @@ var SphereSurfaceFine=new Object({
     // display
     colormap:"normal",
     wireframe:false,
-    perspective:false
+    perspective:false,
+    surfaceOnly: true
 });
 /* Model 5: Ellipsoid, Surface growth */
 var EllipsoidSurface=new Object({
     preset:"Ellipsoid Surface",
     
     // geometry
-    geometry:"ellipsoid",
-    url:"data/ellipsoid-2582.json",     // surface mesh URL
+    geometry:"surface",
+    url:"data/ellipsoid-2502.json",     // surface mesh URL
     th:0.2,                          // surface thickness in mm
     fibres:true,
     
@@ -132,6 +137,9 @@ var EllipsoidSurface=new Object({
     K:100,                             // bulk modulus of tetrahedra
     Kf:1,                             // elastic constant for fibres
     
+    collision: true,    // enable collision detection
+    Kfc: 10000,      // Collision response string stiffness
+    
     // growth
     growth:"surface homogeneous instantaneous",    // growth function
     G:1.6,                             // growth
@@ -140,7 +148,8 @@ var EllipsoidSurface=new Object({
     // display
     colormap:"normal",
     wireframe:false,
-    perspective:false
+    perspective:false,
+    surfaceOnly: true
 });
 
 /* Model 6: Block, Border growth */

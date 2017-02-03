@@ -1,8 +1,8 @@
 /**
- * @class collision
- * @brief Collision detection algorithm
+ * @page Collision
+ * Collision detection and response functions.
  */
- 
+
 var Collision = {
     h: 0,          // cell size
     nhash: 9973,   // number of cells allocated for collision detection (a prime number close to 10k)
@@ -13,7 +13,6 @@ var Collision = {
 
 /**
  * @function HashCell
- * @memberof collision
  * @description Return a hash cell timestamped, storing a vertex index
  * @param {integer} timeStamp Current iteration number
  * @param {integer} i Vertex index
@@ -28,7 +27,6 @@ function HashCell(timeStamp,i) {
 
 /**
  * @function initHash
- * @memberof collision
  * @description Init hash array
  * @param {Geometry} ge Geometry of the model
  */
@@ -65,7 +63,6 @@ function initHash(ge) {
 
 /**
  * @function vertexInTetra
- * @memberof collision
  * @description Test if vertex is inside tetrahedron
  * @param {Geometry} ge Geometry of the model
  * @param {Vector} v Vertex to test
@@ -95,7 +92,6 @@ function vertexInTetra(v, T, penetration, epsilon) {
 
 /**
  * @function closestPtPointTriangle
- * @memberof collision
  * @description Given a point find the closest point in a triangle. From Ericson (2005) Real-time collision detection, p. 141
  * @param {Vector} p Point to test
  * @param {Vector} a 1st vertex of the triangle
@@ -157,7 +153,6 @@ function closestPtPointTriangle(p, a, b, c) {
 
 /**
  * @function closestPtPointTetrahedron
- * @memberof collision
  * @description Given a point find the closest point in a tetrahedron. From Ericson (2005) Real-time collision detection, p. 143
  * @param {Vector} p Point to test
  * @param {Vector} a 1st vertex of the tetrahedron
@@ -214,7 +209,6 @@ function closestPtPointTetrahedron(p, a, b, c, d) {
 }
 /**
  * @function pointOutsideOfPlane_unknownWinding
- * @memberof collision
  * @description Test if point p and d lie on opposite sides of plane through abc (winding unknown)
  * @param {Vector} p The vertex to test
  * @param {Vector} a 1st vertex of the triangle
@@ -233,7 +227,6 @@ function pointOutsideOfPlane_unknownWinding(p, a, b, c, d)
 
 /**
  * @function pointOutsideOfPlane
- * @memberof collision
  * @description Test if vertex p lies outside plane through abc (winding known)
  * @param {Vector} p The vertex to test
  * @param {Vector} a 1st vertex of the triangle
@@ -247,7 +240,6 @@ function pointOutsideOfPlane(p, a, b, c) {
 
 /**
  * @function addToHash
- * @memberof collision
  * @description Hash table 'add' function for collision detection
  * @param {integer} hash Hash number obtained from the x, y, z coordinates of the vertex
  * @param {integer} vertexIndex Index of the vertex being added
@@ -271,7 +263,6 @@ function addToHash(hash, vertexIndex, iter) {
 
 /**
  * @function hashXYZ
- * @memberof collision
  * @description Generates a hash corresponding to x, y, z coordinates
  * @param {float} x X coordinate
  * @param {float} y Y coordinate
@@ -287,7 +278,6 @@ function hashXYZ(x,y,z) {
 
 /**
  * @function collision_surf
- * @memberof collision
  * @description Test for self-collisions in an objects' surface
  * @param {Geometry} ge Geometry object
  * @param {integer} iter Iteration number
@@ -381,7 +371,6 @@ function collision_surf_addConstraints(ge, iter) {
 
 /**
  * @function collision_surf_removeConstraint
- * @memberof collision
  * @description Determine if a collision is resolved and remove unnecessary constrains
  * @param {Geometry} ge Geometry object
  * @param {integer} iter Iteration number
@@ -411,7 +400,6 @@ function collision_surf_removeConstraints(ge, iter) {
 
 /**
  * @function collision_surf_enforceConstraints
- * @memberof collision
  * @description Enforce collision constraints as liner springs
  */
 function collision_surf_enforceConstraints(ge, me, iter) {
@@ -445,7 +433,6 @@ function collision_surf_enforceConstraints(ge, me, iter) {
 
 /**
  * @function collision_tetra
- * @memberof collision
  * @description Test for self-collisions in an objects' volume
  * @param {Geometry} ge Geometry object
  * @param {integer} iter Iteration number
