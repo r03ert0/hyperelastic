@@ -1,10 +1,8 @@
 /**
-	Hyperelastic growth model, Roberto Toro 2015
-	Mechanics
-	
-	The myMechanics object stores mechanical properties of the model, as well
-	as vectors for the force and velocity of each material vertex.
-*/
+ * @page Mechanics
+ *	The myMechanics object stores mechanical properties of the model, as well
+ *	as vectors for the force and velocity of each material vertex.
+ */
 
 function myMechanics() {
 	this.gamma=0.1;		// damping
@@ -18,8 +16,9 @@ function myMechanics() {
 }
 
 /**
-initMechanics
-*/
+ * @function initMechanics
+ * @description Initialises the mechanics code
+ */
 function initMechanics(ge,params) {
 	var me = new myMechanics();
 	var np=ge.np;
@@ -34,12 +33,14 @@ function initMechanics(ge,params) {
 	me.K=params.K;
 	me.mu=params.mu;
 	me.Kf=params.Kf;
+	me.Kfc=params.Kfc;
 	
 	return me;
 }
 /**
-tetraElasticity
-*/
+ * @function tetraElasticity
+ * @description Computes elastic forces for a deformed tetrahedron
+ */
 function tetraElasticity(ge,me) {
     var np=ge.np;
     var nt=ge.nt;
@@ -162,12 +163,16 @@ function tetraElasticity(ge,me) {
     me.Us=Us;
     me.Uv=Uv;
     me.Ue=Ue;
+    
+    var sumFtet=0;
+    for(i=0;i<Force.length;i+=3)
+    	sumFtet+=Math.sqrt(Force[i]*Force[i]+Force[i+1]*Force[i+1]+Force[i+2]*Force[i+2]);
+    return sumFtet;
 }
 /**
-linElasticity.
-Issue: This function is now specific to the surface models. It should be written
-       in generic terms.
-*/
+ * @function linElasticity
+ * @todo This function is now specific to the surface models. It should be written in generic terms.
+ */
 function linElasticity(ge,me) {
     var nt=ge.nt;
     var p=ge.p;
@@ -181,24 +186,36 @@ function linElasticity(ge,me) {
 	var nor;
 	var	f=[];
 	
+	var Flin=new Float32Array(Force.length);
+	
 	// grey/white interface tetrahedra are those multiple of 3 +1
 	for(i=0;i<nt;i+=3)
 	for(j=0;j<3;j++) {
 		a=t[4*(i+1)+j];
 		l=Math.sqrt(Math.pow(p[3*a+0],2)+Math.pow(p[3*a+1],2)+Math.pow(p[3*a+2],2));
 		l0=re[a];
-		nor=Math.sqrt(Math.pow(p[3*a+0],2)+Math.pow(p[3*a+1],2)+Math.pow(p[3*a+2],2));
+		nor=1;//Math.sqrt(Math.pow(p[3*a+0],2)+Math.pow(p[3*a+1],2)+Math.pow(p[3*a+2],2));
 		f[0]=Kf*(p[3*a+0]/nor)*(1-l/l0);
 		f[1]=Kf*(p[3*a+1]/nor)*(1-l/l0);
 		f[2]=Kf*(p[3*a+2]/nor)*(1-l/l0);
 		Force[3*a+0]+=f[0];
 		Force[3*a+1]+=f[1];
 		Force[3*a+2]+=f[2];
+		
+		Flin[3*a+0]+=f[0];
+		Flin[3*a+1]+=f[1];
+		Flin[3*a+2]+=f[2];
 	}
+	
+	var sumFlin=0;
+	for(i=0;i<Flin.length;i+=3)
+		sumFlin+=Math.sqrt(Flin[i]*Flin[i]+Flin[i+1]*Flin[i+1]+Flin[i+2]*Flin[i+2]);
+	return sumFlin;
 }
 /**
-Integrate velocity into displacement
-*/
+ * @function move
+ * @description Integrate velocity into displacement
+ */
 function move(ge,me,dt) {
 	var np=ge.np;
 	var p=ge.p;

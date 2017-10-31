@@ -1,7 +1,8 @@
 /**
-	Hyperelastic growth model, Roberto Toro 2015
-	Main
-*/
+ * @page Simulation
+ * Organisation of all simulation code
+ */
+
 
 var simulationParams;	// simulation parametres
 var simulation;			// simulation object
@@ -9,6 +10,7 @@ var display;			// display
 var flag_running=true;
 
 function mySimulation(params) {
+    this.iter=0;
 	this.time=0;// history, actually
 	this.dt=0;	// time step
 
@@ -19,63 +21,86 @@ function mySimulation(params) {
 }
 
 /**
-Main: init simulation
-*/
+ * @function initSimulation
+ */
 function initSimulation(params) {
+<<<<<<< HEAD
+=======
+	var def=$.Deferred();
+	
+>>>>>>> r03ert0/master
 	flag_running=true;
 	$("#startStop").html("Stop");
 	var si=new mySimulation();
+	var make;
 	
 	// create geometry
 	switch(params.geometry) {
 		case "block":
-			si.ge=makeBlock(params);
+			make=makeBlock;
+			break;
+		case "ublock":
+			make=makeUBlock;
 			break;
 		case "ring":
-			si.ge=makeRing(params);
+			make=makeRing;
 			break;
-		case "sphere":
-			si.ge=makeSphere(params);
-			break;
-	}
-
-	// init mechanics
-	si.me=initMechanics(si.ge,params);
-
-	// init growth
-	si.gr=initGrowth(params);
-	switch(params.growth) {
-		case "homogeneous":
-			si.growthFunction=growHomogeneous;
-			break;
-		case "block border instantaneous":
-			si.growthFunction=growBlockBorderInstantaneous;
-			break;
-		case "ring border instantaneous":
-			si.growthFunction=growRingBorderInstantaneous;
-			break;
-		case "ring tangential instantaneous":
-			si.growthFunction=growRingTangentialInstantaneous;
+		case "surface":
+			make=makeSurface;
 			break;
 	}
 	
-	// compute time step for simulation
-	si.dt=computeTimeStep(si.ge,si.me);
-	
-	if(params.T==0)
-		si.growthFunction(si.ge,si.gr);
-	
-	/*
-	$("#select").change(selectSimulation);
-	$("#startStop").click(startStop);
-	*/
+	make(params)
+	.then(function(ge) {
+		si.ge=ge;
 
-	return si;
+		// init mechanics
+		si.me=initMechanics(si.ge,params);
+		
+		// init growth
+		si.gr=initGrowth(params);
+		switch(params.growth) {
+			case "homogeneous":
+				si.growthFunction=growHomogeneous;
+				break;
+			case "block border instantaneous":
+				si.growthFunction=growBlockBorderInstantaneous;
+				break;
+			case "ring border instantaneous":
+				si.growthFunction=growRingBorderInstantaneous;
+				break;
+			case "ring tangential instantaneous":
+				si.growthFunction=growRingTangentialInstantaneous;
+				break;
+			case "surface homogeneous instantaneous":
+				si.growthFunction=growSurfaceHomogeneousInstantaneous;
+				break;
+		}
+
+		// compute time step for simulation
+		si.dt=computeTimeStep(si.ge,si.me);
+
+		if(params.T==0)
+			si.growthFunction(si.ge,si.gr);
+			
+        // init hash array for collision detection
+        if(si.ge.params["collision"])
+            initHash(si.ge);
+
+		/*
+		$("#select").change(selectSimulation);
+		$("#startStop").click(startStop);
+		*/
+
+		def.resolve(si);
+	});
+	
+	return def.promise();
 }
 
 /**
-computeTimeStep
-*/
+ * @function computeTimeStep
+ */
 function computeTimeStep(ge,me) {
 	var a=0;	// average mesh spacing
 	var n1,n2;
@@ -103,22 +128,50 @@ function computeTimeStep(ge,me) {
 }
 
 /**
-Simulation step
-Request a new frame, call the render function, call the simulation functions and update
-model display.
-*/
+ * @function simulationStep
+ * @description Simulation step. Request a new frame, call the render function, call the simulation functions and update model display.
+ */
 function simulationStep(si) {
 	
+<<<<<<< HEAD
 	if(si.time>0.1 || flag_running==false)	return;
+=======
+	if(flag_running==false)
+		return;
+>>>>>>> r03ert0/master
 		
+	// advance time
 	si.time+=si.dt;
+	si.iter+=1;
 
-	tetraElasticity(si.ge,si.me);
-	//linElasticity(si.ge,si.me);
+	var Ftet=0,Flin=0;
+
+	// add elastic forces from tetrahedra
+	Ftet=tetraElasticity(si.ge,si.me);
+	
+	// add elastic forces from linear elements
+	if(si.ge.params["fibres"])// && si.ge.params.fibres==true)
+		Flin=linElasticity(si.ge,si.me);
+		
+	// Collision detection
+	if(si.ge.params["collision"]) {
+	    if(si.ge.params["surfaceOnly"]) {
+    	    collision_surf_addConstraints(si.ge, si.iter);
+            collision_surf_removeConstraints(si.ge, si.iter);
+            collision_surf_enforceConstraints(si.ge, si.me, si.iter);
+        } else
+    	    collision_tetra(si.ge, si.iter);
+    }
+
+	//console.log("Ftet:",Ftet,"Flin:",Flin);
+	
 	move(si.ge,si.me,si.dt);
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> r03ert0/master
 function pauseResume(di) {
 	if(flag_running==true) {
 		flag_running=false;
