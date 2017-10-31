@@ -24,7 +24,7 @@ Render options:
 
 After each change in parametres click 'Restart' to launch a new simulation.
 
-#How to add a new geometry to the code (for developers)
+## How to add a new geometry to the code (for developers)
 
 These are the steps that were required to add the block geometry and the Block Border preset (and may be required to add another geometry)
 
