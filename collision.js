@@ -72,8 +72,8 @@ function initHash(ge) {
  * @return {boolean} True if a penetration was detected
  */
 function vertexInTetra(v, T, penetration, epsilon) {
-    var    coords;  // double3D
-    var    a,b,c,x; // double3D
+    var coords;  // double3D
+    var a,b,c,x; // double3D
     
     a=subtract(T[1],T[0]);
     b=subtract(T[2],T[0]);
@@ -283,11 +283,11 @@ function hashXYZ(x,y,z) {
  * @param {integer} iter Iteration number
  */
 function collision_surf_addConstraints(ge, iter) {
-    var    i,j,k,x,y,z;
-    var    h,hash;
-    var    min,max;
-    var    belongsToTriangle;
-    var    p,q,T=[];
+    var i,j,k,x,y,z;
+    var h,hash;
+    var min,max;
+    var belongsToTriangle;
+    var p,q,T=[];
     
     // 1st pass: assign vertices to hash
     for(i=0;i<ge.np;i++) {     // np/2 because only the vertices of the external surface are used
@@ -404,10 +404,10 @@ function collision_surf_removeConstraints(ge, iter) {
  */
 function collision_surf_enforceConstraints(ge, me, iter) {
     var Force=me.Force;
-	var Kfc=me.Kfc;
+    var Kfc=me.Kfc;
 
-	var	l;
-	
+    var l;
+    
     var ci, pi;
     var p,q,pq,T;
     var a, b, c;
@@ -438,12 +438,12 @@ function collision_surf_enforceConstraints(ge, me, iter) {
  * @param {integer} iter Iteration number
  */
 function collision_tetra(ge, iter) {
-    var    i,j,k,x,y,z;
-    var    h,hash;
-    var    min,max,penetration;
-    var    isInTetrahedron;
-    var    p,T=[];
-    var    penetration={};
+    var i,j,k,x,y,z;
+    var h,hash;
+    var min,max,penetration;
+    var isInTetrahedron;
+    var p,T=[];
+    var penetration={};
     
     // 1st pass: assign vertices to hash
     for(i=0;i<ge.np;i++) {     // np/2 because only the vertices of the external surface are used

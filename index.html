@@ -1,207 +1,207 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset=utf-8 />
-	<title>Mechanical Morphogenesis</title>
-	<script src="lib/jquery-1.8.2.min.js"></script>
-	<script src="lib/three.min.js"></script>
-	<script src="lib/TrackballControls.js"></script>
-	<style>
-	.v {
-	    color:black;
-	}
-	.t {
-	    color:gray;
-	}
-	.collide {
-	    color:red;
-	}
-	</style>
+    <meta charset=utf-8 />
+    <title>Mechanical Morphogenesis</title>
+    <script src="lib/jquery-1.8.2.min.js"></script>
+    <script src="lib/three.min.js"></script>
+    <script src="lib/TrackballControls.js"></script>
+    <style>
+    .v {
+        color:black;
+    }
+    .t {
+        color:gray;
+    }
+    .collide {
+        color:red;
+    }
+    </style>
 </head>
 <body>
 
-	<div style="font-family:sans-serif;font-size:12px;border:thin solid #bbb;padding:5px;position:absolute;top:10px;left:10px;z-index:10;background-color:rgba(255,255,255,0.8)">
-		<table id="params"></table>
-		<div id="log" style="border:thin solid lightGrey;padding:10px"></div>
-		<button id="restart">Restart</button>
-		<button id="startStop">Stop</button>
-		<a id="saveParams" href=# >Save Params</a>
-	</div>
-	
-	<script src="algebra.js"></script>
-	<script src="geometry.js"></script>
-	<script src="growth.js"></script>
-	<script src="mechanics.js"></script>
-	<script src="display.js"></script>
-	<script src="simulation.js"></script>
-	<script src="collision.js"></script>
-	<script src="presets.js"></script>
-	<script>
-	var menus={
-		preset: ["Block Border","U Block Collision","Ring Tangential","Ring Border","Sphere Surface","Sphere Surface Fine","Ellipsoid Surface"],
-		growth: ["homogeneous","block border instantaneous","ring tangential instantaneous","ring border instantaneous","surface homogeneous instantaneous"],
-		geometry: ["block","ublock","ring","surface"],
-		colormap: ["normal","deformation"]
-	};
-	
-	// get model preset from URL (use BlockBorder by default)
-	var args=getArguments();
-	simulationParams=getPresetParams(args.model);
-	setParams(simulationParams,menus);
+    <div style="font-family:sans-serif;font-size:12px;border:thin solid #bbb;padding:5px;position:absolute;top:10px;left:10px;z-index:10;background-color:rgba(255,255,255,0.8)">
+        <table id="params"></table>
+        <div id="log" style="border:thin solid lightGrey;padding:10px"></div>
+        <button id="restart">Restart</button>
+        <button id="startStop">Stop</button>
+        <a id="saveParams" href=# >Save Params</a>
+    </div>
+    
+    <script src="algebra.js"></script>
+    <script src="geometry.js"></script>
+    <script src="growth.js"></script>
+    <script src="mechanics.js"></script>
+    <script src="display.js"></script>
+    <script src="simulation.js"></script>
+    <script src="collision.js"></script>
+    <script src="presets.js"></script>
+    <script>
+    var menus={
+        preset: ["Block Border","U Block Collision","Ring Tangential","Ring Border","Sphere Surface","Sphere Surface Fine","Ellipsoid Surface"],
+        growth: ["homogeneous","block border instantaneous","ring tangential instantaneous","ring border instantaneous","surface homogeneous instantaneous"],
+        geometry: ["block","ublock","ring","surface"],
+        colormap: ["normal","deformation"]
+    };
+    
+    // get model preset from URL (use BlockBorder by default)
+    var args=getArguments();
+    simulationParams=getPresetParams(args.model);
+    setParams(simulationParams,menus);
 
-	// init display
-	display=initDisplay(simulationParams);
+    // init display
+    display=initDisplay(simulationParams);
 
-	// start simulation
-	initSimulation(simulationParams)
-	.then(function(sim) {
-		simulation=sim;
-		initMesh(display,simulation,simulationParams);
-		// trigger animation
-		animate();
-	});
+    // start simulation
+    initSimulation(simulationParams)
+    .then(function(sim) {
+        simulation=sim;
+        initMesh(display,simulation,simulationParams);
+        // trigger animation
+        animate();
+    });
 
-	$("body").on('change', "#preset", function() {
-		simulationParams=getPresetParams($("#preset").val());
-		setParams(simulationParams,menus);
-		initSimulation(simulationParams)
-		.then(function(sim) {
-			simulation=sim;
-			initMesh(display,simulation,simulationParams);
-		});
-	});
+    $("body").on('change', "#preset", function() {
+        simulationParams=getPresetParams($("#preset").val());
+        setParams(simulationParams,menus);
+        initSimulation(simulationParams)
+        .then(function(sim) {
+            simulation=sim;
+            initMesh(display,simulation,simulationParams);
+        });
+    });
 
-	$("#restart").click(function(){
-		simulationParams=getParams();
-		initSimulation(simulationParams)
-		.then(function(sim) {
-			simulation=sim;
-			initMesh(display,simulation,simulationParams);
-		});
-	});
+    $("#restart").click(function(){
+        simulationParams=getParams();
+        initSimulation(simulationParams)
+        .then(function(sim) {
+            simulation=sim;
+            initMesh(display,simulation,simulationParams);
+        });
+    });
 
-	$("#startStop").click(function(){
-		pauseResume();
-	});
+    $("#startStop").click(function(){
+        pauseResume();
+    });
 
-	$("#saveParams").click(function(){
-		var data = getParams();
-		data.t = simulation.time.toFixed(4);
-		data.Ue = simulation.me.Ue.toFixed(2);
-    	
-    	var name = prompt("Preset name",data.preset);
-    	if(name==undefined)
-    		return;
-    	data.preset=name;
+    $("#saveParams").click(function(){
+        var data = getParams();
+        data.t = simulation.time.toFixed(4);
+        data.Ue = simulation.me.Ue.toFixed(2);
+        
+        var name = prompt("Preset name",data.preset);
+        if(name==undefined)
+            return;
+        data.preset=name;
 
-		var paramExport = JSON.stringify( data );
+        var paramExport = JSON.stringify( data );
         var paramExportData = 'data:application/csv;charset=utf-8,' + encodeURIComponent( paramExport );
         this.href = paramExportData;
         this.target = '_blank';
         this.download = name+'.json';
-	});
+    });
 
-	function getArguments() {
-		var search = location.search.substring(1);
-		return search?JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
-						 function(key, value) { return key===""?value:decodeURIComponent(value) }):{}	
-	}
-	function clone(obj) {
-		return JSON.parse(JSON.stringify(obj));
-	}
-	function setParams(param,menus) {
-		console.log("set parametres",param);
-		var i,j,key,type,val,sel;
-		$(".param").remove();
-		for(key in param) {
-			val=param[key];
-		
-			// handle menus
-			if(menus[key]!=undefined) {
-				var str;
-				str="<tr class='param'><td>"+key+"</td><td><select id='"+key+"' class='string'>";
-				for(j in menus[key])
-					str+="<option value='"+menus[key][j]+"'>"+menus[key][j]+"</option>";
-				str+="</select></td></tr>";
-				$("#params").append(str);
-				$("#"+key).val(val);
-				continue;
-			}
-		
-			// handle single value fields
-			type=typeof val;
-			switch(type) {
-				case "number":
-				case "string":
-					$("#params").append("<tr class='param'><td>"+key+"</td><td><input type='text' class='"+type+"' id='"+key+"' size='10'/></td></tr>");		
-					$("#"+key).val(param[key].toString());
-					break;
-				case "boolean":
-					$("#params").append("<tr class='param'><td>"+key+"</td><td><input type='checkbox' class='"+type+"' id='"+key+"' size='10'/></td></tr>");		
-					$("#"+key).prop('checked',param[key]);
-					break;
-			}
-		}
-	}
-	function getParams() {
-		var param={};
-		$(".param").each(function(i){
-			var key,val,type;
-			key=$(this).find("td")[0].innerHTML;
-			type=$("#"+key).attr('class');
-			switch(type) {
-				case "boolean":
-					val=$("#"+key).prop('checked');
-					break;
-				case "number":
-					val=JSON.parse($("#"+key).val());
-					break;
-				case "string":
-					val=$("#"+key).val();
-					break;
-			}
-			param[key]=val;
-		});
-	
-		return param;
-	}
-	function getPresetParams(presetName) {
-		var param;
-		switch(presetName) {
-			case "BlockBorder":
-			case "Block Border":
-				param=clone(BlockBorder);
-				break;
-			case "UBlockCollision":
-			case "U Block Collision":
-				param=clone(UBlockCollision);
-				break;
-			case "RingTangential":
-			case "Ring Tangential":
-				param=clone(RingTangential);
-				break;
-			case "RingBorder":
-			case "Ring Border":
-				param=clone(RingBorder);
-				break;
-			case "Sphere":
-			case "Sphere Surface":
-				param=clone(SphereSurface);
-				break;
-			case "SphereFine":
-			case "Sphere Surface Fine":
-				param=clone(SphereSurfaceFine);
-				break;
-			case "Ellipsoid":
-			case "Ellipsoid Surface":
-				param=clone(EllipsoidSurface);
-				break;
-			default:
-				param=clone(BlockBorder);
-		}
-		return param;
-	}
-	</script>
+    function getArguments() {
+        var search = location.search.substring(1);
+        return search?JSON.parse('{"' + search.replace(/&/g, '","').replace(/=/g,'":"') + '"}',
+                         function(key, value) { return key===""?value:decodeURIComponent(value) }):{}    
+    }
+    function clone(obj) {
+        return JSON.parse(JSON.stringify(obj));
+    }
+    function setParams(param,menus) {
+        console.log("set parametres",param);
+        var i,j,key,type,val,sel;
+        $(".param").remove();
+        for(key in param) {
+            val=param[key];
+        
+            // handle menus
+            if(menus[key]!=undefined) {
+                var str;
+                str="<tr class='param'><td>"+key+"</td><td><select id='"+key+"' class='string'>";
+                for(j in menus[key])
+                    str+="<option value='"+menus[key][j]+"'>"+menus[key][j]+"</option>";
+                str+="</select></td></tr>";
+                $("#params").append(str);
+                $("#"+key).val(val);
+                continue;
+            }
+        
+            // handle single value fields
+            type=typeof val;
+            switch(type) {
+                case "number":
+                case "string":
+                    $("#params").append("<tr class='param'><td>"+key+"</td><td><input type='text' class='"+type+"' id='"+key+"' size='10'/></td></tr>");        
+                    $("#"+key).val(param[key].toString());
+                    break;
+                case "boolean":
+                    $("#params").append("<tr class='param'><td>"+key+"</td><td><input type='checkbox' class='"+type+"' id='"+key+"' size='10'/></td></tr>");        
+                    $("#"+key).prop('checked',param[key]);
+                    break;
+            }
+        }
+    }
+    function getParams() {
+        var param={};
+        $(".param").each(function(i){
+            var key,val,type;
+            key=$(this).find("td")[0].innerHTML;
+            type=$("#"+key).attr('class');
+            switch(type) {
+                case "boolean":
+                    val=$("#"+key).prop('checked');
+                    break;
+                case "number":
+                    val=JSON.parse($("#"+key).val());
+                    break;
+                case "string":
+                    val=$("#"+key).val();
+                    break;
+            }
+            param[key]=val;
+        });
+    
+        return param;
+    }
+    function getPresetParams(presetName) {
+        var param;
+        switch(presetName) {
+            case "BlockBorder":
+            case "Block Border":
+                param=clone(BlockBorder);
+                break;
+            case "UBlockCollision":
+            case "U Block Collision":
+                param=clone(UBlockCollision);
+                break;
+            case "RingTangential":
+            case "Ring Tangential":
+                param=clone(RingTangential);
+                break;
+            case "RingBorder":
+            case "Ring Border":
+                param=clone(RingBorder);
+                break;
+            case "Sphere":
+            case "Sphere Surface":
+                param=clone(SphereSurface);
+                break;
+            case "SphereFine":
+            case "Sphere Surface Fine":
+                param=clone(SphereSurfaceFine);
+                break;
+            case "Ellipsoid":
+            case "Ellipsoid Surface":
+                param=clone(EllipsoidSurface);
+                break;
+            default:
+                param=clone(BlockBorder);
+        }
+        return param;
+    }
+    </script>
 </body>
 </html>
 

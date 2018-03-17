@@ -24,15 +24,15 @@
  * @return {Matrix} A matrix object
  */
 function matrix(a,b,c,d,e,f,g,h,i) {
-	this.a=a;
-	this.b=b;
-	this.c=c;
-	this.d=d;
-	this.e=e;
-	this.f=f;
-	this.g=g;
-	this.h=h;
-	this.i=i;
+    this.a=a;
+    this.b=b;
+    this.c=c;
+    this.d=d;
+    this.e=e;
+    this.f=f;
+    this.g=g;
+    this.h=h;
+    this.i=i;
 }
 /**
  * @function invert
@@ -68,8 +68,8 @@ function invert(m) {
  */
 function mulInvMatVec(m, p)
 {
-    var    det;
-    var    a,b,c,d,e,f,g,h,i;
+    var det;
+    var a,b,c,d,e,f,g,h,i;
     
     det = m.b*m.f*m.g + m.c*m.d*m.h + m.a*m.e*m.i - m.c*m.e*m.g - m.a*m.f*m.h - m.b*m.d*m.i;
     
