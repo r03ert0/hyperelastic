@@ -19,6 +19,10 @@ For the block, the geometry parametres are:
 * Depth: block depth in mm
 * d: length of a typical tetrahedron. Width, Height and Depth have to be multiples of d.
 
+The example of an ellipsoid:
+
+<img src="https://user-images.githubusercontent.com/6297454/37560922-aadad69e-2a41-11e8-871b-c7a106517bbc.gif" width="420"> <img src="https://user-images.githubusercontent.com/6297454/37560923-aaee4cd8-2a41-11e8-8915-2ce1b18583b1.gif" width="420">
+
 Render options:
 * Wireframe: whether to display the objects in wireframe or not
 * Perspective: whether to use perspective rendering or orthographic
