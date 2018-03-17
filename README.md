@@ -4,7 +4,6 @@ Javascript simulations of hyperelastic materials submitted to growth.
 The interface presents various presets illustrating different geometries and growth functions. After selecting a preset, its parametres can be changed to test their different effects. The mechanical parametres are shared by all models. They include the bulk modulus (K) and the shear modulus (mu). Addditionally, there's the material's density (rho) and the viscosity of the simulation (gamma).
 
 <img src="https://user-images.githubusercontent.com/6297454/37560725-fc0d6aee-2a3d-11e8-9231-dfa0578b4583.gif" width="420"> <img src="https://user-images.githubusercontent.com/6297454/37560727-02d72ca2-2a3e-11e8-8099-6a17f62b447b.gif" width="420">
-
 For the ring, the geometry parametres are:
 
 * Ri: Inner radius in mm
