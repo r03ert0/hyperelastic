@@ -555,7 +555,7 @@ function surface_deformationColor(ge) {
     var i,j,k,l,m,n;
     var numbox,numtet,im,ir;
     var J,vol0,vol1;
-    var    tmp=0,mintmp,maxtmp,val;
+    var tmp=0,mintmp,maxtmp,val;
     var vval,vval2,nval;
     
     var nsp=ge.np/2;

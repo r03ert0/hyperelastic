@@ -181,10 +181,10 @@ function linElasticity(ge,me) {
     var Force=me.Force;
     var Kf=me.Kf;
 
-    var    i,j,k;
-    var    a,l,l0;
+    var i,j,k;
+    var a,l,l0;
     var nor;
-    var    f=[];
+    var f=[];
     
     var Flin=new Float32Array(Force.length);
     

@@ -164,10 +164,10 @@ var BlockBorder=new Object({
     d:0.5,               // typical length of a volume elements
 
     // mechanics
-    gamma:0.1,          // dumping factor
-    rho:0.0001,         // mass density
-    mu:50,              // shear modulus
-    K:5,                // bulk modulus
+    gamma:0.1,           // dumping factor
+    rho:0.0001,          // mass density
+    mu:50,               // shear modulus
+    K:5,                 // bulk modulus
     
     // growth
     growth:"block border instantaneous",  // growth function

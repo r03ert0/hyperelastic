@@ -201,11 +201,11 @@ function growRingTangentialInstantaneous(ge,gr) {
 function growSurfaceHomogeneousInstantaneous(ge,gr) {
     var nt=ge.nt;
     var r=ge.r;
-    var    H=gr.G;    // homogeneous growth
+    var H=gr.G;          // homogeneous growth
+
+    var i,j,k,ir;
     
-    var    i,j,k,ir;
-    
-    for(i=0;i<nt;i++) // each tetrahedron
+    for(i=0;i<nt;i++)    // each tetrahedron
     for(j=0;j<4;j++) {
         ir=4*i+j;        // rest vertex
         for(k=0;k<3;k++) {

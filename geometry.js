@@ -266,7 +266,7 @@ function makeBlock(params) {
     var Height=params.Height;
     var Depth=params.Depth;
     var d=params.d;
-    var nw=parseInt(Width/d+0.5)+1;        // volume elements in the outter circle (+0.5 used for rounding)
+    var nw=parseInt(Width/d+0.5)+1;     // volume elements in the outter circle (+0.5 used for rounding)
     var nh=parseInt(Height/d+0.5)+1;    // number of vol. elem. rings in x-y plane
     var nd=parseInt(Depth/d+0.5)+1;     // number of vol. elem. rings in z
     var np=nw*nh*nd;
@@ -500,8 +500,8 @@ function makeRing(params) {
     var th=params.th;
     var d=params.d;
     var ntheta=parseInt(2*Math.PI*Ro/d);    // volume elements in the outter circle
-    var nxy=parseInt((Ro-Ri)/d)+1;            // number of vol. elem. rings in x-y plane
-    var nz=parseInt(th/d)+1;                   // number of vol. elem. rings in z
+    var nxy=parseInt((Ro-Ri)/d)+1;          // number of vol. elem. rings in x-y plane
+    var nz=parseInt(th/d)+1;                // number of vol. elem. rings in z
     var np=ntheta*nxy*nz;
     var nt=5*ntheta*(nxy-1)*(nz-1);
     var p=new Float32Array(np*3);
@@ -604,23 +604,23 @@ function makeSurface(params) {
         var th=params.th;
         var d=params.d;
 
-        var    np;            // number of material vertices
-        var    nt;            // number of material tetrahedra
-        var nf;         // number of surface faces (triangles)
-        var    t;            // array for material surface topology
-        var p;            // array for material surface geometry
-        var r;            // array for rest surface geometry
-        var re;            // array for rest fibre geometry
-        var Volume;        // array for tetrahedral volumes
+        var np;               // number of material vertices
+        var nt;               // number of material tetrahedra
+        var nf;               // number of surface faces (triangles)
+        var t;                // array for material surface topology
+        var p;                // array for material surface geometry
+        var r;                // array for rest surface geometry
+        var re;               // array for rest fibre geometry
+        var Volume;           // array for tetrahedral volumes
 
         var i,j,k;
         var vol,n1,n2,n3,n4;
         var P,T,NP,NT;
-        var    NO,n,nor,a=[],b=[];
+        var NO,n,nor,a=[],b=[];
 
         // Configure vertices from loaded mesh
-        P=surf.p;    // vertices in the mesh
-        T=surf.t;    // triangles in the mesh
+        P=surf.p;      // vertices in the mesh
+        T=surf.t;      // triangles in the mesh
         NP=surf.np;    // number of vertices
         NT=surf.nt;    // number of triangles
     
@@ -667,12 +667,12 @@ function makeSurface(params) {
         np=NP*2;
         nt=3*NT;
         nf=NT;
-        t=new Uint16Array(nt*4);            // array for cortex topology
-        f=new Uint16Array(nf*3);            // array for surface topology
+        t=new Uint16Array(nt*4);             // array for cortex topology
+        f=new Uint16Array(nf*3);             // array for surface topology
         p=new Float32Array(np*3);            // array for material surface geometry
-        r=new Float32Array(nt*4*3);            // array for rest surface geometry
-        re=new Float32Array(NP);            // array for rest fibre geometry
-        Volume=new Float32Array(np);        // array for tetrahedral volumes
+        r=new Float32Array(nt*4*3);          // array for rest surface geometry
+        re=new Float32Array(NP);             // array for rest fibre geometry
+        Volume=new Float32Array(np);         // array for tetrahedral volumes
 
         ge.params=params;
     
