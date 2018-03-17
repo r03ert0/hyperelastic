@@ -24,15 +24,15 @@
  * @return {Matrix} A matrix object
  */
 function matrix(a,b,c,d,e,f,g,h,i) {
-	this.a=a;
-	this.b=b;
-	this.c=c;
-	this.d=d;
-	this.e=e;
-	this.f=f;
-	this.g=g;
-	this.h=h;
-	this.i=i;
+    this.a=a;
+    this.b=b;
+    this.c=c;
+    this.d=d;
+    this.e=e;
+    this.f=f;
+    this.g=g;
+    this.h=h;
+    this.i=i;
 }
 /**
  * @function invert
